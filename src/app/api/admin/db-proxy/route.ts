@@ -47,8 +47,8 @@ export async function POST(request: Request) {
       case 'update':
         if (id) {
           result = await supabaseAdmin.from(table).update(data).eq('id', id).select();
-        } else if (eqField && eqValue) {
-          result = await supabaseAdmin.from(table).update(data).eq(eqField, eqValue).select();
+        } else if (eqField && eqValue !== undefined) {
+          result = await (supabaseAdmin.from(table).update(data) as any).eq(eqField as string, eqValue).select();
         } else {
           return NextResponse.json({ error: 'Missing ID or eq filters for update' }, { status: 400 });
         }
@@ -56,8 +56,8 @@ export async function POST(request: Request) {
       case 'delete':
         if (id) {
           result = await supabaseAdmin.from(table).delete().eq('id', id);
-        } else if (eqField && eqValue) {
-          result = await supabaseAdmin.from(table).delete().eq(eqField, eqValue);
+        } else if (eqField && eqValue !== undefined) {
+          result = await (supabaseAdmin.from(table).delete() as any).eq(eqField as string, eqValue);
         } else {
           return NextResponse.json({ error: 'Missing ID or eq filters for delete' }, { status: 400 });
         }

@@ -6,11 +6,13 @@ import Image from 'next/image';
 import { useLanguage } from '../context/LanguageContext';
 import { useDb } from '../context/DbContext';
 import { usePathname } from 'next/navigation';
+import { useGoogleAds } from '../context/GoogleAdsContext';
 
 export const Footer: React.FC = () => {
   const { t, language } = useLanguage();
   const { settings } = useDb();
   const pathname = usePathname();
+  const { trackConversion } = useGoogleAds();
 
 
   const currentYear = new Date().getFullYear();
@@ -97,6 +99,7 @@ export const Footer: React.FC = () => {
               style={{ color: 'var(--color-accent)', transition: 'var(--transition-fast)' }}
               onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-white)'}
               onMouseOut={(e) => e.currentTarget.style.color = 'var(--color-accent)'}
+              onClick={() => trackConversion('whatsapp')}
             >
               <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12.031 2C6.49 2 2 6.48 2 12.01c0 1.77.46 3.49 1.34 5.01L2 22l5.12-1.34c1.47.8 3.12 1.22 4.9 1.22 5.54 0 10.03-4.48 10.03-10.01C22.05 6.48 17.56 2 12.03 2zm4.8 13.86c-.27.76-1.34 1.39-1.85 1.49-.46.09-.94.13-2.93-.68-2.54-1.04-4.18-3.62-4.31-3.79-.12-.17-.99-1.32-.99-2.51 0-1.2.62-1.78.84-2.03.22-.25.47-.31.62-.31.15 0 .31 0 .44.01.14 0 .32-.05.5.38.18.43.62 1.51.68 1.63.06.12.1.26.02.43-.08.17-.12.28-.25.43-.12.15-.26.33-.37.45-.12.13-.25.27-.11.51.14.24.63 1.03 1.36 1.68.93.83 1.72 1.09 1.97 1.21.25.12.39.1.53-.06.14-.17.62-.72.79-.97.17-.25.34-.21.58-.12.24.09 1.51.71 1.77.84.26.13.43.19.49.3.06.11.06.66-.21 1.42z"/>

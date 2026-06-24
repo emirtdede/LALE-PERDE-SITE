@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '../context/LanguageContext';
 import { useDb } from '../context/DbContext';
+import { useGoogleAds } from '../context/GoogleAdsContext';
 
 const CategoryImageSlideshow = ({ images, fallbackImage, alt }: { images?: string[], fallbackImage: string, alt: string }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -57,6 +58,7 @@ export default function HomeClient({
 }) {
   const { t, language } = useLanguage();
   const router = useRouter();
+  const { trackConversion } = useGoogleAds();
 
   const [isNight, setIsNight] = useState(false);
 
@@ -195,6 +197,9 @@ export default function HomeClient({
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    // Track Google Ads Conversion
+    trackConversion('contact');
 
     const formspreeUrl = 'https://formspree.io/f/xyzyqobd';
 

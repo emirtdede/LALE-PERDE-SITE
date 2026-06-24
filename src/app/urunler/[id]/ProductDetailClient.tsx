@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useLanguage } from '../../../context/LanguageContext';
 import { Product, SystemSettings } from '../../../context/dbTypes';
 import { useDb } from '../../../context/DbContext';
+import { useGoogleAds } from '../../../context/GoogleAdsContext';
 
 interface ProductDetailClientProps {
   initialProduct: Product;
@@ -15,6 +16,7 @@ interface ProductDetailClientProps {
 export default function ProductDetailClient({ initialProduct }: ProductDetailClientProps) {
   const { t, language } = useLanguage();
   const router = useRouter();
+  const { trackConversion } = useGoogleAds();
 
   const [product] = useState<Product>(initialProduct);
   const [settings, setSettings] = useState<SystemSettings | null>(null);
@@ -78,6 +80,9 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
     // Filter non-digit characters from the phone number
     const cleanPhone = latestSettings.whatsappNumber.replace(/\D/g, '');
     const wpUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(messageText)}`;
+
+    // Track Google Ads Conversion
+    trackConversion('whatsapp');
 
     // Open WhatsApp in a new tab
     window.open(wpUrl, '_blank');

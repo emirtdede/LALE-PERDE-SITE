@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDb } from '../../context/DbContext';
 import { Category, Product } from '../../context/dbTypes';
+import { useGoogleAds } from '../../context/GoogleAdsContext';
 
 interface MeasureWizardClientProps {
   initialProducts: Product[];
@@ -55,6 +56,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
   const { t, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { trackConversion } = useGoogleAds();
 
   // Wizard state: 1 = Category selection (Usage Area), 2 = Product Selection, 3 = Mechanism / Sub-type Selection, 4 = Width (A) Entry, 5 = Height (B) Entry
   const [step, setStep] = useState<number>(1);
@@ -299,6 +301,10 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
     
     const cleanPhone = settings.whatsappNumber.replace(/\D/g, '');
     const wpUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(text)}`;
+    
+    // Track Google Ads Conversion
+    trackConversion('whatsapp');
+
     window.open(wpUrl, '_blank');
   };
 

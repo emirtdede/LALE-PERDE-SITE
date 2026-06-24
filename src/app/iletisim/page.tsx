@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDb } from '../../context/DbContext';
 import { supabase } from '../../lib/supabaseClient';
+import { useGoogleAds } from '../../context/GoogleAdsContext';
 
 export default function IletisimPage() {
   const { t, language } = useLanguage();
   const { settings, addInboxMessage } = useDb();
+  const { trackConversion } = useGoogleAds();
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -38,6 +40,9 @@ export default function IletisimPage() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
+    // Track Google Ads Conversion
+    trackConversion('contact');
 
     const formspreeUrl = 'https://formspree.io/f/xkolnkpg';
 

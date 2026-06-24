@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useDb } from '@/context/DbContext';
 import { supabase } from '@/lib/supabaseClient';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -67,6 +67,7 @@ export default function DashboardTab() {
   const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
   const [hasFullHistoryLoaded, setHasFullHistoryLoaded] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const manualSyncControllerRef = useRef<AbortController | null>(null);
 
   const parseGA4Data = (data: any): GA4Stats => {
     if (!data) return {
@@ -125,6 +126,9 @@ export default function DashboardTab() {
     fetchGA4Cache();
     return () => {
       controller.abort();
+      if (manualSyncControllerRef.current) {
+        manualSyncControllerRef.current.abort();
+      }
     };
   }, []);
 
@@ -177,10 +181,16 @@ export default function DashboardTab() {
       }
     }
 
+    if (manualSyncControllerRef.current) {
+      manualSyncControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    manualSyncControllerRef.current = controller;
+
     setSyncing(true);
     setToastMessage(null);
     try {
-      const res = await fetch('/api/analytics/sync', { method: 'POST' });
+      const res = await fetch('/api/analytics/sync', { method: 'POST', signal: controller.signal });
       const body = await res.json();
       
       if (body.success) {
@@ -210,10 +220,14 @@ export default function DashboardTab() {
         }
       }
     } catch (err: any) {
-      console.error('Error syncing GA4:', err);
-      showToast(t('admin.dashboard.alerts.connectionError'), true);
+      if (err.name !== 'AbortError') {
+        console.error('Error syncing GA4:', err);
+        showToast(t('admin.dashboard.alerts.connectionError'), true);
+      }
     } finally {
-      setSyncing(false);
+      if (manualSyncControllerRef.current === controller) {
+        setSyncing(false);
+      }
     }
   };
 

@@ -46,7 +46,7 @@ const VisitorTracker: React.FC = () => {
             localStorage.setItem('lale_perde_client_visitor', JSON.stringify(localVisitor));
           }
         } catch (e) {
-          console.error('Visitor logging API failed', e);
+          console.warn('Visitor logging API failed', e);
           localVisitor = {
             ip: '',
             ipHash: 'unknown',

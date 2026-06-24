@@ -93,8 +93,8 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
       (language === 'tr' ? c.nameTr : c.nameEn) === selectedColor
     );
     
-    const nameToSearch = (language === 'tr' ? product.nameTr : product.nameEn).toLowerCase();
-    const descToSearch = (language === 'tr' ? product.descriptionTr : product.descriptionEn).toLowerCase();
+    const nameToSearch = (language === 'tr' ? (product.nameTr || '') : (product.nameEn || '')).toLowerCase();
+    const descToSearch = (language === 'tr' ? (product.descriptionTr || '') : (product.descriptionEn || '')).toLowerCase();
     const query = searchQuery.toLowerCase().trim();
     const matchSearch = query === '' || nameToSearch.includes(query) || descToSearch.includes(query);
 

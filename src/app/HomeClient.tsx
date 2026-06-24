@@ -233,7 +233,7 @@ export default function HomeClient({
         })
       });
     } catch (err) {
-      console.error('Formspree submit failed:', err);
+      console.warn('Formspree submit failed:', err);
     }
 
     setTimeout(() => {

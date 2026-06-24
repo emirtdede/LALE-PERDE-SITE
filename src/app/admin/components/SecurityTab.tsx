@@ -61,7 +61,7 @@ export default function SecurityTab() {
       })
       .catch(err => {
         if (err.name !== 'AbortError') {
-          console.error('Error fetching secure settings', err);
+          console.warn('Error fetching secure settings:', err.message || err);
         }
       });
 
@@ -130,8 +130,8 @@ export default function SecurityTab() {
           setSendingEmail(false);
           return;
         }
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        console.warn('Error sending OTP:', err.message || err);
         setVerificationError(t('admin.security.twoFactor.errConnection'));
         setSendingEmail(false);
         return;
@@ -281,8 +281,8 @@ export default function SecurityTab() {
           setSaved(true);
           setTimeout(() => setSaved(false), 3000);
         }
-      } catch (e) {
-        console.error('Profile update failed', e);
+      } catch (e: any) {
+        console.warn('Profile update failed:', e.message || e);
       }
     }
   };

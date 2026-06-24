@@ -371,7 +371,7 @@ export default function ServicesTab() {
       const url = await fileToDataUrl(files[0]);
       setCropQueue([url]);
     } catch (err) {
-      console.error('Error reading file:', err);
+      console.warn('Error reading file:', err);
       alert(t('admin.services.alerts.fileReadError'));
     } finally {
       setIsConverting(false);
@@ -388,7 +388,7 @@ export default function ServicesTab() {
         image: uploadedUrl
       }));
     } catch (e) {
-      console.error(e);
+      console.warn(e);
       alert(t('admin.services.alerts.fileReadError'));
     } finally {
       setIsConverting(false);

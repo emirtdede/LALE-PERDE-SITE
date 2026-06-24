@@ -174,7 +174,7 @@ export default function VisitorsTab() {
           >
             <option value="2026-06">{t('admin.dashboard.months.june')} 2026</option>
             <option value="2026-05">{t('admin.dashboard.months.may')} 2026</option>
-            <option value="2026-04">{t('admin.dashboard.months.april')} 2026</option>
+            <option value="2026-04">{t('admin.dashboard.months.april')} 2026</option> 
           </select>
         </div>
 

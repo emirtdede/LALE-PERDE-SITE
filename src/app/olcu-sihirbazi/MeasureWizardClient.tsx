@@ -143,7 +143,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
       if (savedFabricTypeId) setSelectedFabricTypeId(savedFabricTypeId);
       if (savedStep) setStep(Number(savedStep));
     } catch (e) {
-      console.error('Failed to load from localStorage', e);
+      console.warn('Failed to load from localStorage', e);
     }
     setIsLoaded(true);
   }, [categories, products, searchParams]);
@@ -172,7 +172,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
       localStorage.setItem('measure_wizard_show_window', String(showWindow));
       localStorage.setItem('measure_wizard_fabric_type_id', selectedFabricTypeId);
     } catch (e) {
-      console.error('Failed to save to localStorage', e);
+      console.warn('Failed to save to localStorage', e);
     }
   }, [step, selectedUsage, selectedCat, selectedProduct, selectedSubtype, width, height, windowWidth, windowHeight, showWindow, selectedFabricTypeId, isLoaded]);
 

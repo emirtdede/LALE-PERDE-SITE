@@ -31,9 +31,7 @@ export default function IletisimPage() {
       status: 'form_started'
     });
     if (res.error) {
-      console.error('Failed to log form interaction start:', res.error);
-    } else {
-      console.log('Logged form interaction start successfully:', res);
+      console.warn('Failed to log form interaction start:', res.error);
     }
   };
 
@@ -64,9 +62,7 @@ export default function IletisimPage() {
         .update({ status: 'form_completed' })
         .eq('session_id', sessionTrackId);
       if (res.error) {
-        console.error('Failed to log form interaction completion:', res.error);
-      } else {
-        console.log('Logged form interaction completion successfully:', res);
+        console.warn('Failed to log form interaction completion:', res.error);
       }
     }
 
@@ -77,7 +73,7 @@ export default function IletisimPage() {
         body: JSON.stringify({ name, phone, email, subject: contactSubject, message })
       });
     } catch (err) {
-      console.error('Formspree submit failed:', err);
+      console.warn('Formspree submit failed:', err);
     }
 
     setTimeout(() => {

@@ -423,7 +423,7 @@ export default function CategoriesTab() {
       }
       setCropQueue(prev => [...prev, ...urls]);
     } catch (err) {
-      console.error('Error reading files:', err);
+      console.warn('Error reading files:', err);
       alert('Dosyalar okunurken bir hata oluştu.');
     } finally {
       setIsConverting(false);
@@ -440,7 +440,7 @@ export default function CategoriesTab() {
         images: [...(prev.images || []), uploadedUrl]
       }));
     } catch (e) {
-      console.error(e);
+      console.warn(e);
       alert('Dosya yüklenemedi.');
     } finally {
       setIsConverting(false);

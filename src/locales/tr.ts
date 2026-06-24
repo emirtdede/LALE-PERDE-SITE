@@ -167,6 +167,7 @@ export const tr = {
     }
   },
   admin: {
+
     loadingTab: "Sekme Yükleniyor...",
     sidebar: {
       expand: "Genişlet",
@@ -576,6 +577,20 @@ export const tr = {
       }
     },
     dashboard: {
+      months: {
+        january: "Ocak",
+        february: "Şubat",
+        march: "Mart",
+        april: "Nisan",
+        may: "Mayıs",
+        june: "Haziran",
+        july: "Temmuz",
+        august: "Ağustos",
+        september: "Eylül",
+        october: "Ekim",
+        november: "Kasım",
+        december: "Aralık"
+      },
       title: "Lale Perde Yönetim Paneli",
       lastUpdated: "Son Güncelleme:",
       exportBtn: "Dışa Aktar",

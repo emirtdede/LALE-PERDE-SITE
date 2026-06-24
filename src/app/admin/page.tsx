@@ -115,7 +115,7 @@ export default function AdminPage() {
             setIsAuthenticated(true);
           }
         })
-        .catch(err => console.error('Auth verify error:', err))
+        .catch(err => console.warn('Auth verify error:', err))
         .finally(() => setIsCheckingAuth(false));
 
       // Load sidebar settings
@@ -229,7 +229,7 @@ export default function AdminPage() {
           return;
         }
       } catch (err) {
-        console.error('2FA E-posta gönderme hatası:', err);
+        console.warn('2FA E-posta gönderme hatası:', err);
         setLoginError('E-posta servisi ile bağlantı kurulamadı.');
         return;
       }
@@ -276,7 +276,7 @@ export default function AdminPage() {
           return;
         }
       } catch (err) {
-        console.error('Şifre sıfırlama e-posta hatası:', err);
+        console.warn('Şifre sıfırlama e-posta hatası:', err);
         setResetStatus('E-posta servisine erişilemedi.');
         return;
       }

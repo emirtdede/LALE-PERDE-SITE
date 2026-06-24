@@ -597,7 +597,7 @@ export default function ProductsTab() {
       }
       setCropQueue(prev => [...prev, ...items]);
     } catch (err) {
-      console.error('Error reading files:', err);
+      console.warn('Error reading files:', err);
       alert(t('admin.products.alerts.fileReadError'));
     } finally {
       setIsConverting(false);

@@ -116,7 +116,7 @@ export default function DashboardTab() {
         }
       } catch (err: any) {
         if (err.name !== 'AbortError') {
-          console.error('Error fetching GA4 cache:', err);
+          console.warn('Error fetching GA4 cache:', err.message || err);
         }
       } finally {
         setLoading(false);
@@ -150,7 +150,7 @@ export default function DashboardTab() {
           }
         } catch (err: any) {
           if (err.name !== 'AbortError') {
-            console.error('Error fetching full GA4 history:', err);
+            console.warn('Error fetching full GA4 history:', err.message || err);
           }
         } finally {
           setLoadingHistory(false);
@@ -221,7 +221,7 @@ export default function DashboardTab() {
       }
     } catch (err: any) {
       if (err.name !== 'AbortError') {
-        console.error('Error syncing GA4:', err);
+        console.warn('Error syncing GA4:', err.message || err);
         showToast(t('admin.dashboard.alerts.connectionError'), true);
       }
     } finally {

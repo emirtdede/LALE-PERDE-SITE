@@ -205,8 +205,8 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       setSearchLogs([]);
       setVisitorLogs([]);
 
-    } catch (e) {
-      console.error('Error fetching data from Supabase', e);
+    } catch (e: any) {
+      console.warn('Error fetching data from Supabase:', e.message || e);
     } finally {
       setLoading(false);
     }
@@ -222,12 +222,12 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       });
       const result = await response.json();
       if (!response.ok || result.error) {
-        console.error('DB Proxy Error:', result.error);
+        console.warn('DB Proxy Error:', result.error);
         return { error: result.error, data: null };
       }
       return { error: null, data: result.data };
-    } catch (err) {
-      console.error('Network Error:', err);
+    } catch (err: any) {
+      console.warn('Network Error:', err.message || err);
       return { error: err, data: null };
     }
   };
@@ -260,7 +260,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const from = (page - 1) * limit;
     const to = from + limit - 1;
     const { data, error, count } = await supabase.from('products').select('*', { count: 'exact' }).range(from, to).order('created_at', { ascending: false });
-    if (error) { console.error('Error fetching products', error); return { data: [], count: 0 }; }
+    if (error) { console.warn('Error fetching products', error); return { data: [], count: 0 }; }
     const mapped = (data || []).map(mapProductFromDb);
     return { data: mapped, count: count || 0 };
   };
@@ -269,7 +269,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const from = (page - 1) * limit;
     const to = from + limit - 1;
     const { data, error, count } = await supabase.from('visitor_logs').select('*', { count: 'exact' }).range(from, to).order('timestamp', { ascending: false });
-    if (error) { console.error('Error fetching visitor_logs', error); return { data: [], count: 0 }; }
+    if (error) { console.warn('Error fetching visitor_logs', error); return { data: [], count: 0 }; }
     const mapped = (data || []).map(mapVisitorLogFromDb);
     setVisitorLogs(mapped);
     return { data: mapped, count: count || 0 };
@@ -279,7 +279,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const from = (page - 1) * limit;
     const to = from + limit - 1;
     const { data, error, count } = await supabase.from('inbox').select('*', { count: 'exact' }).range(from, to).order('date', { ascending: false });
-    if (error) { console.error('Error fetching inbox', error.message, error.details); return { data: [], count: 0 }; }
+    if (error) { console.warn('Error fetching inbox', error.message, error.details); return { data: [], count: 0 }; }
     const mapped = (data || []).map(mapInboxFromDb);
     setInbox(mapped);
     return { data: mapped, count: count || 0 };
@@ -289,7 +289,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const from = (page - 1) * limit;
     const to = from + limit - 1;
     const { data, error, count } = await supabase.from('search_logs').select('*', { count: 'exact' }).range(from, to).order('count', { ascending: false });
-    if (error) { console.error('Error fetching search_logs', error); return { data: [], count: 0 }; }
+    if (error) { console.warn('Error fetching search_logs', error); return { data: [], count: 0 }; }
     setSearchLogs(data || []);
     return { data: data || [], count: count || 0 };
   };
@@ -298,7 +298,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const addProduct = async (p: Omit<Product, 'createdAt' | 'updatedAt'>) => {
     const { data, error } = await adminDbMutate('products', 'insert', [mapProductToDb(p)]);
     if (error) {
-      console.error('Error adding product', error);
+      console.warn('Error adding product', error);
       return false;
     }
     return true;
@@ -308,7 +308,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const dbData = mapProductToDb(p);
     const { data, error } = await adminDbMutate('products', 'update', dbData, p.id);
     if (error) {
-      console.error('Error updating product', error);
+      console.warn('Error updating product', error);
       return false;
     }
     return true;
@@ -317,7 +317,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const deleteProduct = async (id: string) => {
     const { error } = await adminDbMutate('products', 'delete', undefined, id);
     if (error) {
-      console.error('Error deleting product', error);
+      console.warn('Error deleting product', error);
       return false;
     }
     return true;
@@ -327,7 +327,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const addCategory = async (c: Category) => {
     const { data, error } = await adminDbMutate('categories', 'insert', [mapCategoryToDb(c)]);
     if (error) {
-      console.error('Error adding category', error);
+      console.warn('Error adding category', error);
       return false;
     }
     if (data && data[0]) {
@@ -339,7 +339,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const updateCategory = async (c: Category) => {
     const { data, error } = await adminDbMutate('categories', 'update', mapCategoryToDb(c), c.id);
     if (error) {
-      console.error('Error updating category', error);
+      console.warn('Error updating category', error);
       return false;
     }
     if (data && data[0]) {
@@ -351,7 +351,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const deleteCategory = async (id: string) => {
     const { error } = await adminDbMutate('categories', 'delete', undefined, id);
     if (error) {
-      console.error('Error deleting category', error);
+      console.warn('Error deleting category', error);
       return false;
     }
     setCategories(prev => prev.filter(item => item.id !== id));
@@ -361,21 +361,21 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   // CURTAIN TYPES MUTATIONS
   const addCurtainType = async (c: Omit<CurtainType, 'id'>) => {
     const { data, error } = await adminDbMutate('curtain_types', 'insert', [mapCurtainTypeToDb(c as CurtainType)]);
-    if (error) { console.error('Error adding curtain type', error); return false; }
+    if (error) { console.warn('Error adding curtain type', error); return false; }
     if (data && data[0]) setCurtainTypes(prev => [...prev, mapCurtainTypeFromDb(data[0])]);
     return true;
   };
 
   const updateCurtainType = async (c: CurtainType) => {
     const { data, error } = await adminDbMutate('curtain_types', 'update', mapCurtainTypeToDb(c), c.id);
-    if (error) { console.error('Error updating curtain type', error); return false; }
+    if (error) { console.warn('Error updating curtain type', error); return false; }
     if (data && data[0]) setCurtainTypes(prev => prev.map(item => item.id === c.id ? mapCurtainTypeFromDb(data[0]) : item));
     return true;
   };
 
   const deleteCurtainType = async (id: string) => {
     const { error } = await adminDbMutate('curtain_types', 'delete', undefined, id);
-    if (error) { console.error('Error deleting curtain type', error); return false; }
+    if (error) { console.warn('Error deleting curtain type', error); return false; }
     setCurtainTypes(prev => prev.filter(item => item.id !== id));
     return true;
   };
@@ -383,21 +383,21 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   // FABRIC TYPES MUTATIONS
   const addFabricType = async (f: Omit<FabricType, 'id'>) => {
     const { data, error } = await adminDbMutate('fabric_types', 'insert', [mapFabricTypeToDb(f as FabricType)]);
-    if (error) { console.error('Error adding fabric type', error); return false; }
+    if (error) { console.warn('Error adding fabric type', error); return false; }
     if (data && data[0]) setFabricTypes(prev => [...prev, mapFabricTypeFromDb(data[0])]);
     return true;
   };
 
   const updateFabricType = async (f: FabricType) => {
     const { data, error } = await adminDbMutate('fabric_types', 'update', mapFabricTypeToDb(f), f.id);
-    if (error) { console.error('Error updating fabric type', error); return false; }
+    if (error) { console.warn('Error updating fabric type', error); return false; }
     if (data && data[0]) setFabricTypes(prev => prev.map(item => item.id === f.id ? mapFabricTypeFromDb(data[0]) : item));
     return true;
   };
 
   const deleteFabricType = async (id: string) => {
     const { error } = await adminDbMutate('fabric_types', 'delete', undefined, id);
-    if (error) { console.error('Error deleting fabric type', error); return false; }
+    if (error) { console.warn('Error deleting fabric type', error); return false; }
     setFabricTypes(prev => prev.filter(item => item.id !== id));
     return true;
   };
@@ -405,21 +405,21 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   // MOUNTING TYPES MUTATIONS
   const addMountingType = async (m: Omit<MountingType, 'id'>) => {
     const { data, error } = await adminDbMutate('mounting_types', 'insert', [mapMountingTypeToDb(m as MountingType)]);
-    if (error) { console.error('Error adding mounting type', error); return false; }
+    if (error) { console.warn('Error adding mounting type', error); return false; }
     if (data && data[0]) setMountingTypes(prev => [...prev, mapMountingTypeFromDb(data[0])]);
     return true;
   };
 
   const updateMountingType = async (m: MountingType) => {
     const { data, error } = await adminDbMutate('mounting_types', 'update', mapMountingTypeToDb(m), m.id);
-    if (error) { console.error('Error updating mounting type', error); return false; }
+    if (error) { console.warn('Error updating mounting type', error); return false; }
     if (data && data[0]) setMountingTypes(prev => prev.map(item => item.id === m.id ? mapMountingTypeFromDb(data[0]) : item));
     return true;
   };
 
   const deleteMountingType = async (id: string) => {
     const { error } = await adminDbMutate('mounting_types', 'delete', undefined, id);
-    if (error) { console.error('Error deleting mounting type', error); return false; }
+    if (error) { console.warn('Error deleting mounting type', error); return false; }
     setMountingTypes(prev => prev.filter(item => item.id !== id));
     return true;
   };
@@ -428,7 +428,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const updateSettings = async (s: SystemSettings) => {
     const { data, error } = await adminDbMutate('site_settings', 'update', mapSettingsToDb(s), 'main_settings');
     if (error) {
-      console.error('Error updating settings', error);
+      console.warn('Error updating settings', error);
       return false;
     }
     if (data && data[0]) {
@@ -441,7 +441,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const updateHomeContent = async (h: HomePageContent) => {
     const { data, error } = await adminDbMutate('home_page_content', 'update', mapHomeContentToDb(h), 'home_content');
     if (error) {
-      console.error('Error updating home content', error);
+      console.warn('Error updating home content', error);
       return false;
     }
     if (data && data[0]) {
@@ -454,7 +454,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const addService = async (s: ServiceItem) => {
     const { data, error } = await adminDbMutate('services', 'insert', [mapServiceToDb(s)]);
     if (error) {
-      console.error('Error adding service', error);
+      console.warn('Error adding service', error);
       return false;
     }
     if (data && data[0]) {
@@ -466,7 +466,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const updateService = async (s: ServiceItem) => {
     const { data, error } = await adminDbMutate('services', 'update', mapServiceToDb(s), s.id);
     if (error) {
-      console.error('Error updating service', error);
+      console.warn('Error updating service', error);
       return false;
     }
     if (data && data[0]) {
@@ -478,7 +478,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const deleteService = async (id: string) => {
     const { error } = await adminDbMutate('services', 'delete', undefined, id);
     if (error) {
-      console.error('Error deleting service', error);
+      console.warn('Error deleting service', error);
       return false;
     }
     setServices(prev => prev.filter(item => item.id !== id));
@@ -489,7 +489,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const addGuide = async (g: GuideItem) => {
     const { data, error } = await adminDbMutate('guides', 'insert', [mapGuideToDb(g)]);
     if (error) {
-      console.error('Error adding guide', error);
+      console.warn('Error adding guide', error);
       return false;
     }
     if (data && data[0]) {
@@ -501,7 +501,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const updateGuide = async (g: GuideItem) => {
     const { data, error } = await adminDbMutate('guides', 'update', mapGuideToDb(g), g.id);
     if (error) {
-      console.error('Error updating guide', error);
+      console.warn('Error updating guide', error);
       return false;
     }
     if (data && data[0]) {
@@ -513,7 +513,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const deleteGuide = async (id: string) => {
     const { error } = await adminDbMutate('guides', 'delete', undefined, id);
     if (error) {
-      console.error('Error deleting guide', error);
+      console.warn('Error deleting guide', error);
       return false;
     }
     setGuides(prev => prev.filter(item => item.id !== id));
@@ -524,7 +524,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const addCampaign = async (c: Campaign) => {
     const { data, error } = await adminDbMutate('campaigns', 'insert', [mapCampaignToDb(c)]);
     if (error) {
-      console.error('Error adding campaign', error);
+      console.warn('Error adding campaign', error);
       return false;
     }
     if (data && data[0]) {
@@ -536,7 +536,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const updateCampaign = async (c: Campaign) => {
     const { data, error } = await adminDbMutate('campaigns', 'update', mapCampaignToDb(c), c.id);
     if (error) {
-      console.error('Error updating campaign', error);
+      console.warn('Error updating campaign', error);
       return false;
     }
     if (data && data[0]) {
@@ -548,7 +548,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const deleteCampaign = async (id: string) => {
     const { error } = await adminDbMutate('campaigns', 'delete', undefined, id);
     if (error) {
-      console.error('Error deleting campaign', error);
+      console.warn('Error deleting campaign', error);
       return false;
     }
     setCampaigns(prev => prev.filter(item => item.id !== id).sort((a, b) => (a.displayOrder || 1) - (b.displayOrder || 1)));
@@ -561,7 +561,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const insertData = mapInboxToDb({ ...m, id });
     const { data, error } = await supabase.from('inbox').insert([insertData]).select();
     if (error) {
-      console.error('Error adding inbox message', error);
+      console.warn('Error adding inbox message', error);
       return false;
     }
     if (data && data[0]) {
@@ -573,7 +573,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   const updateInboxMessage = async (m: InboxMessage) => {
     const { data, error } = await adminDbMutate('inbox', 'update', mapInboxToDb(m), m.id);
     if (error) {
-      console.error('Error updating inbox message', error);
+      console.warn('Error updating inbox message', error);
       return false;
     }
     if (data && data[0]) {
@@ -603,7 +603,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         return true;
       }
     } catch (e) {
-      console.error('Error logging search', e);
+      console.warn('Error logging search', e);
     }
     return false;
   };
@@ -623,7 +623,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         return true;
       }
     } catch (e) {
-      console.error('Error inserting visitor log', e);
+      console.warn('Error inserting visitor log', e);
     }
     return false;
   }, []);
@@ -640,7 +640,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
         return true;
       }
     } catch (e) {
-      console.error('Error updating visitor log duration', e);
+      console.warn('Error updating visitor log duration', e);
     }
     return false;
   }, []);

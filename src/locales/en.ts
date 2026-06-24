@@ -167,6 +167,7 @@ export const en = {
     }
   },
   admin: {
+
     loadingTab: "Loading Tab...",
     sidebar: {
       expand: "Expand",
@@ -576,6 +577,20 @@ export const en = {
       }
     },
     dashboard: {
+      months: {
+        january: "January",
+        february: "February",
+        march: "March",
+        april: "April",
+        may: "May",
+        june: "June",
+        july: "July",
+        august: "August",
+        september: "September",
+        october: "October",
+        november: "November",
+        december: "December"
+      },
       title: "Lale Perde Management Panel",
       lastUpdated: "Last Updated:",
       exportBtn: "Export",

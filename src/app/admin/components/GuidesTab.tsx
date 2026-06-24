@@ -373,7 +373,7 @@ export default function GuidesTab() {
       const url = await fileToDataUrl(files[0]);
       setCropQueue([url]);
     } catch (err) {
-      console.error('Error reading file:', err);
+      console.warn('Error reading file:', err);
       alert(t('admin.guides.alerts.fileReadError'));
     } finally {
       setIsConverting(false);
@@ -390,7 +390,7 @@ export default function GuidesTab() {
         image: uploadedUrl
       }));
     } catch (e) {
-      console.error(e);
+      console.warn(e);
       alert(t('admin.guides.alerts.fileReadError'));
     } finally {
       setIsConverting(false);

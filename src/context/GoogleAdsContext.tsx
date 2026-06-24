@@ -54,7 +54,7 @@ export function GoogleAdsProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } catch (err) {
-        console.error('Google Ads yapılandırması yüklenirken hata:', err);
+        console.warn('Google Ads yapılandırması yüklenirken hata:', err);
       } finally {
         setIsReady(true);
       }
@@ -75,7 +75,6 @@ export function GoogleAdsProvider({ children }: { children: React.ReactNode }) {
         window.gtag('event', 'conversion', {
           send_to: sendTo,
         });
-        console.log(`[Google Ads] Conversion tracked: ${type} → ${sendTo}`);
       }
     },
     [config]

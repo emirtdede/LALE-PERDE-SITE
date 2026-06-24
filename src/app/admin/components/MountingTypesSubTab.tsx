@@ -297,7 +297,7 @@ export default function MountingTypesSubTab() {
                     <td style={{ padding: '1rem', color: 'rgba(189, 149, 75, 0.6)', cursor: selectedCategoryId === 'all' || editingId ? 'default' : 'grab', userSelect: 'none', textAlign: 'center', fontSize: '1.2rem' }} title={selectedCategoryId === 'all' ? 'Sıralama için bir sektör filtreleyin' : 'Sürükle bırak ile sırala'}>
                       ☰
                     </td>
-                    <td style={{ padding: '1rem', color: '#A3B3C2' }}>{categories.find(cat => cat.id === item.categoryId)?.nameTr || '-'}</td>
+                    <td style={{ padding: '1rem', color: '#A3B3C2', whiteSpace: 'nowrap' }}>{categories.find(cat => cat.id === item.categoryId)?.nameTr || '-'}</td>
                     <td style={{ padding: '1rem', color: '#A3B3C2', fontWeight: 500 }}>
                       {curtainTypes.find(ct => ct.id === item.curtainTypeId)?.nameTr || '-'}
                     </td>

@@ -17,18 +17,32 @@ const LoadingTab = () => {
   return <div style={{ padding: '3rem', color: '#BD954B', textAlign: 'center', fontSize: '1.2rem' }}>{t('admin.loadingTab')}</div>;
 };
 
-const DynamicDashboardTab = dynamic(() => import('./components/DashboardTab'), { ssr: false, loading: LoadingTab });
-const HomePageContentTab = dynamic(() => import('./components/HomePageContentTab'), { ssr: false, loading: LoadingTab });
-const CategoriesTab = dynamic(() => import('./components/CategoriesTab'), { ssr: false, loading: LoadingTab });
-const ProductsTab = dynamic(() => import('./components/ProductsTab'), { ssr: false, loading: LoadingTab });
-const ServicesTab = dynamic(() => import('./components/ServicesTab'), { ssr: false, loading: LoadingTab });
-const GuidesTab = dynamic(() => import('./components/GuidesTab'), { ssr: false, loading: LoadingTab });
-const ContactInfoTab = dynamic(() => import('./components/ContactInfoTab'), { ssr: false, loading: LoadingTab });
-const InboxTab = dynamic(() => import('./components/InboxTab'), { ssr: false, loading: LoadingTab });
-const CampaignsTab = dynamic(() => import('./components/CampaignsTab'), { ssr: false, loading: LoadingTab });
-const VisitorsTab = dynamic(() => import('./components/VisitorsTab'), { ssr: false, loading: LoadingTab });
-const SecurityTab = dynamic(() => import('./components/SecurityTab'), { ssr: false, loading: LoadingTab });
-const GoogleAdsTab = dynamic(() => import('./components/GoogleAdsTab'), { ssr: false, loading: LoadingTab });
+const lazyRetry = (importFn: () => Promise<any>) => {
+  return async () => {
+    try {
+      return await importFn();
+    } catch (error) {
+      if (typeof window !== 'undefined') {
+        console.warn('Chunk load failed, reloading page...', error);
+        window.location.reload();
+      }
+      throw error;
+    }
+  };
+};
+
+const DynamicDashboardTab = dynamic(() => lazyRetry(() => import('./components/DashboardTab'))(), { ssr: false, loading: LoadingTab });
+const HomePageContentTab = dynamic(() => lazyRetry(() => import('./components/HomePageContentTab'))(), { ssr: false, loading: LoadingTab });
+const CategoriesTab = dynamic(() => lazyRetry(() => import('./components/CategoriesTab'))(), { ssr: false, loading: LoadingTab });
+const ProductsTab = dynamic(() => lazyRetry(() => import('./components/ProductsTab'))(), { ssr: false, loading: LoadingTab });
+const ServicesTab = dynamic(() => lazyRetry(() => import('./components/ServicesTab'))(), { ssr: false, loading: LoadingTab });
+const GuidesTab = dynamic(() => lazyRetry(() => import('./components/GuidesTab'))(), { ssr: false, loading: LoadingTab });
+const ContactInfoTab = dynamic(() => lazyRetry(() => import('./components/ContactInfoTab'))(), { ssr: false, loading: LoadingTab });
+const InboxTab = dynamic(() => lazyRetry(() => import('./components/InboxTab'))(), { ssr: false, loading: LoadingTab });
+const CampaignsTab = dynamic(() => lazyRetry(() => import('./components/CampaignsTab'))(), { ssr: false, loading: LoadingTab });
+const VisitorsTab = dynamic(() => lazyRetry(() => import('./components/VisitorsTab'))(), { ssr: false, loading: LoadingTab });
+const SecurityTab = dynamic(() => lazyRetry(() => import('./components/SecurityTab'))(), { ssr: false, loading: LoadingTab });
+const GoogleAdsTab = dynamic(() => lazyRetry(() => import('./components/GoogleAdsTab'))(), { ssr: false, loading: LoadingTab });
 
 export type AdminTab = 'dashboard' | 'homeContent' | 'categories' | 'products' | 'services' | 'guides' | 'contactInfo' | 'inbox' | 'campaigns' | 'visitors' | 'security' | 'googleAds';
 

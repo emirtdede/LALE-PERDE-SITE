@@ -161,6 +161,22 @@ export default function DashboardTab() {
 
   const handleManualSync = async () => {
     if (syncing) return;
+
+    // Cooldown check (60 seconds)
+    const now = Date.now();
+    const lastSyncStr = localStorage.getItem('lale_perde_last_sync_timestamp');
+    if (lastSyncStr) {
+      const lastSync = parseInt(lastSyncStr, 10);
+      const diff = (now - lastSync) / 1000;
+      if (diff < 60) {
+        const remaining = Math.ceil(60 - diff);
+        showToast(language === 'tr' 
+          ? `Lütfen tekrar senkronize etmeden önce ${remaining} saniye bekleyin.` 
+          : `Please wait ${remaining} seconds before syncing again.`, true);
+        return;
+      }
+    }
+
     setSyncing(true);
     setToastMessage(null);
     try {
@@ -168,6 +184,8 @@ export default function DashboardTab() {
       const body = await res.json();
       
       if (body.success) {
+        // Save current timestamp to localStorage
+        localStorage.setItem('lale_perde_last_sync_timestamp', Date.now().toString());
         setGa4Data(parseGA4Data(body.data));
         setLastUpdated(body.updatedAt);
         setQuotaExceeded(false);

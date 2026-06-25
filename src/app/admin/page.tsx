@@ -260,9 +260,11 @@ export default function AdminPage() {
       return;
     }
     if (settings) {
-      // NOTE: Realistically we should hash this, but we will leave the DbContext update as is for UI consistency.
-      updateSettings({ ...settings, adminPasswordHash: newPasswordInput });
-      await completePasswordReset(newPasswordInput);
+      const res = await completePasswordReset(newPasswordInput);
+      if (res.error) {
+        setResetStatus(res.error);
+        return;
+      }
       setResetStatus('Şifreniz başarıyla değiştirildi. Giriş yapabilirsiniz.');
       setTimeout(() => {
         setResetFlow(false);

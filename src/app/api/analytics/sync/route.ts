@@ -3,12 +3,21 @@ import crypto from 'crypto';
 // @ts-expect-error
 import { Client } from 'pg';
 import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
+import { jwtVerify } from 'jose';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 let hasCheckedTable = false;
+
+const getSecretKey = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("FATAL: JWT_SECRET ortam değişkeni eksik!");
+  }
+  return new TextEncoder().encode(process.env.JWT_SECRET);
+};
 
 async function ensureTableExists() {
   if (hasCheckedTable) return;
@@ -107,6 +116,20 @@ async function getAccessToken(clientEmail: string, privateKey: string) {
 
 export async function POST() {
   try {
+    // Verify admin authentication
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get('admin_session')?.value;
+
+    if (!adminToken) {
+      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+    }
+
+    try {
+      await jwtVerify(adminToken, getSecretKey());
+    } catch (err) {
+      return NextResponse.json({ error: 'Geçersiz veya süresi dolmuş oturum' }, { status: 401 });
+    }
+
     // Ensure table exists first (non-blocking)
     await ensureTableExists();
 

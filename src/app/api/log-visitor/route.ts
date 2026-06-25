@@ -12,9 +12,16 @@ export async function GET(request: Request) {
   // Geolocation
   let city = 'TR / Unknown';
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+
     const ipRes = await fetch(`https://ipapi.co/${rawIp}/json/`, {
-      headers: { 'User-Agent': 'nodejs-ipapi' }
+      headers: { 'User-Agent': 'nodejs-ipapi' },
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
+
     if (ipRes.ok) {
       const ipData = await ipRes.json();
       if (ipData.city && ipData.country_code) {
@@ -22,7 +29,7 @@ export async function GET(request: Request) {
       }
     }
   } catch (e) {
-    // fallback
+    // fallback silently if fetch fails or times out
   }
 
   return NextResponse.json({ ipHash, city });

@@ -21,6 +21,16 @@ export default function IletisimPage() {
   const [loading, setLoading] = useState(false);
   const [sessionTrackId, setSessionTrackId] = useState<string | null>(null);
 
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
   const handleInputFocus = async () => {
     if (sessionTrackId) return; // Already started tracking
 
@@ -67,7 +77,7 @@ export default function IletisimPage() {
       }
     }
 
-    setTimeout(() => {
+    timerRef.current = setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
       setName('');

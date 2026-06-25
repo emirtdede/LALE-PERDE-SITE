@@ -138,7 +138,7 @@ export async function sendLoginOTP(destinationType: 'email' | 'phone', targetEma
       await sendOTPEmail(targetEmail, otp, '2fa');
     } else {
       // TODO: İleride gerçek SMS sağlayıcısı (örn: Netgsm/Twilio) entegre edilecek.
-      console.log(`\n[SERVER LOG] SMS 2FA KODU (SIMÜLASYON) - İstemci Göremez: ${otp}\n`);
+      console.log('\n[SERVER LOG] SMS 2FA KODU (SIMÜLASYON) - Gönderildi (***)\n');
     }
 
     return { success: true };
@@ -198,7 +198,7 @@ export async function sendSecurityOTP(destinationType: 'email' | 'phone', target
       await sendOTPEmail(targetEmail, otp, 'change');
     } else {
       // TODO: İleride gerçek SMS sağlayıcısı (örn: Netgsm/Twilio) entegre edilecek.
-      console.log(`\n[SERVER LOG] SECURITY SMS KODU (SIMÜLASYON) - İstemci Göremez: ${otp}\n`);
+      console.log('\n[SERVER LOG] SECURITY SMS KODU (SIMÜLASYON) - Gönderildi (***)\n');
     }
 
     return { success: true };
@@ -265,10 +265,35 @@ export async function verifyResetOTP(enteredOTP: string) {
   }
 }
 
-export async function completePasswordReset(_newPasswordHash: string) {
-    // Burada aslında bcrypt hash işlemi ve update yapılmalı, ancak UI tarafında useDb(updateSettings) kullanılıyor.
-    // O yüzden cookie'yi temizlemek için basit bir action bırakıyoruz.
+export async function completePasswordReset(newPassword: string) {
+  try {
     const cookieStore = await cookies();
+    const pendingToken = cookieStore.get('reset_otp')?.value;
+    
+    if (!pendingToken) {
+      return { error: 'Doğrulama süresi dolmuş veya yetkisiz işlem.' };
+    }
+
+    // Verify token validity
+    await jwtVerify(pendingToken, getSecretKey());
+
+    // Hash the password securely using bcrypt
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the admin_auth table
+    const { error: updateError } = await supabaseAdmin
+      .from('admin_auth')
+      .update({ admin_password_hash: hashedPassword })
+      .eq('id', 'main_admin');
+
+    if (updateError) {
+      console.error('Password reset DB update error:', updateError);
+      return { error: 'Şifre güncellenirken bir veritabanı hatası oluştu.' };
+    }
+
     cookieStore.delete('reset_otp');
     return { success: true };
+  } catch (err) {
+    return { error: 'Yetkisiz veya süresi dolmuş işlem.' };
+  }
 }

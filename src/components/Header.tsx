@@ -72,15 +72,19 @@ export const Header: React.FC = () => {
     const currentItem = bannerItems[currentBannerIndex];
     const durationMs = (currentItem?.duration || 8) * 1000;
 
+    let innerTimer: NodeJS.Timeout;
     const timer = setTimeout(() => {
       setBannerFade(false); // Fade out
-      setTimeout(() => {
+      innerTimer = setTimeout(() => {
         setCurrentBannerIndex((prev) => (prev + 1) % bannerItems.length);
         setBannerFade(true); // Fade in
       }, 1000); // fade out duration
     }, durationMs);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (innerTimer) clearTimeout(innerTimer);
+    };
   }, [bannerItems, currentBannerIndex]);
 
   useEffect(() => {

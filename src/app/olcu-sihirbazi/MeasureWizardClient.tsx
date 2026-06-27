@@ -52,6 +52,27 @@ const getCategoryIcon = (key: string) => {
   }
 };
 
+const findCategoryForUsage = (usageKey: string, categoriesList: Category[]) => {
+  const data = CATEGORY_LIMITS[usageKey];
+  if (!data) return null;
+  const label = data.label.toLowerCase();
+  
+  return categoriesList.find(c => {
+    const name = (c.nameTr || '').toLowerCase();
+    const slug = (c.slug || '').toLowerCase();
+    if (usageKey === 'ev' && (name.includes('ev') || slug.includes('ev'))) return true;
+    if (usageKey === 'ofis' && (name.includes('ofis') || slug.includes('ofis'))) return true;
+    if (usageKey === 'cami' && (name.includes('cami') || slug.includes('cami'))) return true;
+    if (usageKey === 'sahne' && (name.includes('sahne') || slug.includes('sahne'))) return true;
+    if (usageKey === 'hastane' && (name.includes('hastane') || slug.includes('hastane'))) return true;
+    if (usageKey === 'otel' && (name.includes('otel') || slug.includes('otel'))) return true;
+    if (usageKey === 'dis_mekan' && (name.includes('dış') || name.includes('dis') || name.includes('teras') || slug.includes('dis'))) return true;
+    if (usageKey === 'endustriyel' && (name.includes('endüstr') || name.includes('endustr') || slug.includes('endustr'))) return true;
+    if (usageKey === 'karavan_tekne' && (name.includes('karavan') || name.includes('tekne') || slug.includes('karavan'))) return true;
+    return name.includes(label) || label.includes(name);
+  }) || null;
+};
+
 function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWizardClientProps) {
   const { t, language } = useLanguage();
   const router = useRouter();
@@ -336,7 +357,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
   }
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem 2rem 5rem', display: 'grid', gridTemplateColumns: '280px 1fr', gap: '4rem', alignItems: 'start' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 5rem', minHeight: 'calc(100vh - 220px)', display: 'grid', gridTemplateColumns: '280px 1fr', gap: '4rem', alignItems: 'center' }}>
       
       {/* Left Sidebar Layout */}
       <aside style={{ position: 'sticky', top: '100px' }}>
@@ -429,6 +450,10 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
                   }}
                   onClick={() => {
                     setSelectedUsage(key);
+                    const matchedCat = findCategoryForUsage(key, categories);
+                    setSelectedCat(matchedCat);
+                    setSelectedProduct(null);
+                    setSelectedSubtype(null);
                     setStep(2);
                   }}
                 >
@@ -494,62 +519,55 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
               </div>
             ) : (
               <div>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', color: 'var(--color-primary)', margin: 0 }}>
-                    {language === 'tr' ? selectedCat.nameTr : selectedCat.nameEn}
-                  </h2>
-                  <button 
-                    onClick={() => setSelectedCat(null)}
-                    style={{ background: 'none', border: 'none', color: 'var(--color-accent)', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.85rem' }}
-                  >
-                    {language === 'tr' ? '(Farklı Bir Tür Seç)' : '(Select Different Type)'}
-                  </button>
-                </div>
-
-                {/* Fabric Type Filter Selection */}
-                {categoryFabricTypes.length > 0 && (
-                  <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <button
-                      onClick={() => setSelectedFabricTypeId('all')}
-                      style={{
-                        background: selectedFabricTypeId === 'all' ? 'var(--color-accent)' : 'transparent',
-                        color: selectedFabricTypeId === 'all' ? '#000' : '#A3B3C2',
-                        border: selectedFabricTypeId === 'all' ? '1px solid var(--color-accent)' : '1px solid rgba(255,255,255,0.15)',
-                        padding: '0.5rem 1.2rem',
-                        borderRadius: '20px',
-                        cursor: 'pointer',
-                        fontSize: '0.85rem',
-                        fontWeight: 600,
-                        transition: 'all 0.2s'
-                      }}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', color: 'var(--color-primary)', margin: 0 }}>
+                      {language === 'tr' ? selectedCat.nameTr : selectedCat.nameEn}
+                    </h2>
+                    <button 
+                      onClick={() => setSelectedCat(null)}
+                      style={{ background: 'none', border: 'none', color: 'var(--color-accent)', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.85rem' }}
                     >
-                      {language === 'tr' ? 'Tümü' : 'All'}
+                      {language === 'tr' ? '(Farklı Bir Tür Seç)' : '(Select Different Type)'}
                     </button>
-                    {categoryFabricTypes.map(ft => (
-                      <button
-                        key={ft.id}
-                        onClick={() => setSelectedFabricTypeId(ft.id)}
-                        style={{
-                          background: selectedFabricTypeId === ft.id ? 'var(--color-accent)' : 'transparent',
-                          color: selectedFabricTypeId === ft.id ? '#000' : '#A3B3C2',
-                          border: selectedFabricTypeId === ft.id ? '1px solid var(--color-accent)' : '1px solid rgba(255,255,255,0.15)',
-                          padding: '0.5rem 1.2rem',
-                          borderRadius: '20px',
-                          cursor: 'pointer',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          transition: 'all 0.2s'
+                  </div>
+
+                  {categoryFabricTypes.length > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                      <label style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-accent)', margin: 0, fontWeight: 500 }}>
+                        {language === 'tr' ? 'Kumaş Türü:' : 'Fabric Type:'}
+                      </label>
+                      <select
+                        value={selectedFabricTypeId}
+                        onChange={(e) => setSelectedFabricTypeId(e.target.value)}
+                        style={{ 
+                          padding: '0.5rem 2rem 0.5rem 1rem', 
+                          border: '1px solid var(--color-border)', 
+                          borderRadius: '4px', 
+                          background: 'var(--color-card-bg)', 
+                          color: 'var(--color-text)', 
+                          cursor: 'pointer', 
+                          outline: 'none',
+                          fontSize: '0.9rem',
+                          minWidth: '180px'
                         }}
                       >
-                        {language === 'tr' ? ft.nameTr : ft.nameEn}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                        <option value="all">{language === 'tr' ? 'Tüm Kumaşlar' : 'All Fabrics'}</option>
+                        {categoryFabricTypes.map(ft => (
+                          <option key={ft.id} value={ft.id}>
+                            {language === 'tr' ? ft.nameTr : ft.nameEn}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
 
                 {filteredProducts.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '4rem', opacity: 0.7 }}>
-                    {language === 'tr' ? 'Seçtiğiniz kumaş türüne uygun ürün bulunmuyor.' : 'No products match the selected fabric type.'}
+                  <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'rgba(26, 46, 64, 0.4)', borderRadius: '8px', border: '1px border rgba(255,255,255,0.05)' }}>
+                    <p style={{ fontSize: '1.1rem', color: 'var(--color-text)', opacity: 0.8, margin: 0 }}>
+                      {language === 'tr' ? 'Bu kategoride henüz tanımlanmış bir ürün bulunmamaktadır.' : 'No products found in this category yet.'}
+                    </p>
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '2rem' }}>

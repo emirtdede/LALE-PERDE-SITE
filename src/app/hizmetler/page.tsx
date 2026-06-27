@@ -29,7 +29,7 @@ export default function ServicesPage() {
   );
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '10px 2rem 3rem' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 2rem 3rem' }}>
       <header style={{ textAlign: 'center', marginBottom: '5rem' }}>
         <h1 className="section-title" style={{ fontSize: '3rem', marginBottom: '1rem' }}>
           {language === 'tr' ? 'Hizmetlerimiz' : 'Our Services'}

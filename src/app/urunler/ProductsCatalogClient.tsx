@@ -116,7 +116,7 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
   });
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '10px 2rem 2rem' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 2rem' }}>
       <header style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
         <h1 className="section-title" style={{ fontSize: '3rem', marginBottom: '1rem' }}>
           {t('catalog.title')}

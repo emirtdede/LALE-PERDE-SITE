@@ -90,7 +90,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
   };
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '20px 2rem 2rem' }}>
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 4rem', minHeight: 'calc(100vh - 220px)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <Link href="/urunler" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2.5rem', color: 'var(--color-accent)', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>
         ← {t('catalog.backToCatalog')}
       </Link>

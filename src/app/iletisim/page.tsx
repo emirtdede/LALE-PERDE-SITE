@@ -88,8 +88,8 @@ export default function IletisimPage() {
   };
 
   return (
-    <div style={{ backgroundColor: 'var(--color-primary)', minHeight: 'calc(100vh - 90px)' }}>
-      <section className="appointment" style={{ padding: '8rem 4rem', minHeight: 'calc(100vh - 90px)', display: 'grid' }}>
+    <div style={{ backgroundColor: 'var(--color-primary)', minHeight: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <section className="appointment" style={{ padding: '8rem 4rem 6rem', minHeight: 'auto', display: 'grid', alignItems: 'center' }}>
         <div className="appointment-info reveal active">
           <span className="section-label">{t('contactPage.label')}</span>
           <h1 className="appointment-title" style={{ fontFamily: 'var(--font-serif)', fontSize: '3.5rem', lineHeight: '1.2', color: '#fff' }}>

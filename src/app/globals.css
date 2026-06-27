@@ -1627,19 +1627,19 @@ header#main-header.not-home {
 
 /* Clear overlaps by applying padding to main component on inner pages */
 header#main-header.not-home + main {
-  padding-top: 90px !important;
+  padding-top: 180px !important;
 }
 
 header#main-header.not-home.scrolled + main {
-  padding-top: 70px !important;
+  padding-top: 140px !important;
 }
 
 header#main-header.not-home.has-banner + main {
-  padding-top: 130px !important;
+  padding-top: 220px !important;
 }
 
 header#main-header.not-home.has-banner.scrolled + main {
-  padding-top: 70px !important;
+  padding-top: 140px !important;
 }
 
 /* Light mode search placeholder overrides */

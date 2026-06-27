@@ -119,6 +119,14 @@ export default function HomeClient({
   const [isLightboxDragging, setIsLightboxDragging] = useState(false);
   const lightboxDragStart = useRef({ x: 0, y: 0 });
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     fetchCommentsLazy?.();
   }, [fetchCommentsLazy]);
@@ -236,12 +244,36 @@ export default function HomeClient({
     setIsLightboxDragging(false);
   };
 
+  const handleLightboxWheel = (e: React.WheelEvent) => {
+    const zoomStep = 0.15;
+    if (e.deltaY < 0) {
+      setLightboxZoom(prev => Math.min(prev + zoomStep, 4));
+    } else {
+      setLightboxZoom(prev => Math.max(prev - zoomStep, 0.5));
+    }
+  };
+
   const zoomIn = () => setLightboxZoom(prev => Math.min(prev + 0.25, 4));
   const zoomOut = () => setLightboxZoom(prev => Math.max(prev - 0.25, 0.5));
   const resetZoom = () => {
     setLightboxZoom(1);
     setLightboxOffset({ x: 0, y: 0 });
   };
+
+  // Keyboard ESC Listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveLightboxImage(null);
+      }
+    };
+    if (activeLightboxImage) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeLightboxImage]);
 
   const logoConfig = settings?.logoConfig || {
     theme: 'gold',
@@ -456,16 +488,8 @@ export default function HomeClient({
           </div>
 
           {/* Full-width responsive Grid */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(12, 1fr)', 
-            gridAutoRows: 'minmax(180px, auto)',
-            gap: '1rem',
-            width: '100%',
-            padding: '0 2rem',
-            boxSizing: 'border-box'
-          }}>
-            {(homeContent?.references?.items && homeContent.references.items.length > 0
+          {(() => {
+            const gridItems = homeContent?.references?.items && homeContent.references.items.length > 0
               ? homeContent.references.items
               : services.map((s, idx) => {
                   const colIdx = idx % 3;
@@ -477,72 +501,88 @@ export default function HomeClient({
                     gridRowStart: rowIdx * 2 + 1,
                     gridRowEnd: (rowIdx + 1) * 2 + 1
                   };
-                })
-            ).map((item: any, idx: number) => {
-              const tilt = galleryTilt[item.id] || { x: 0, y: 0 };
-              return (
-                <div
-                  key={item.id}
-                  onMouseMove={(e) => handleGalleryMouseMove(item.id, e)}
-                  onMouseLeave={() => handleGalleryMouseLeave(item.id)}
-                  onClick={() => {
-                    if (item.image) {
-                      setActiveLightboxImage(item.image);
-                      resetZoom();
-                    }
-                  }}
-                  style={{
-                    gridColumnStart: item.gridColumnStart,
-                    gridColumnEnd: item.gridColumnEnd,
-                    gridRowStart: item.gridRowStart,
-                    gridRowEnd: item.gridRowEnd,
-                    position: 'relative',
-                    minHeight: '260px',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    transform: `perspective(800px) rotateX(${tilt.y * -5}deg) rotateY(${tilt.x * 5}deg)`,
-                    transition: 'transform 0.1s ease, box-shadow 0.3s',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                  }}
-                >
-                  <Image
-                    src={item.image || '/assets/fabric.png'}
-                    alt={language === 'tr' ? item.titleTr : item.titleEn}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 800px"
-                    style={{
-                      objectFit: 'cover',
-                      transform: `scale(1.1) translate(${tilt.x * -8}px, ${tilt.y * -8}px)`,
-                      transition: 'transform 0.1s ease',
-                      zIndex: -1
-                    }}
-                  />
-                  <div 
-                    style={{ 
-                      position: 'absolute', 
-                      inset: 0, 
-                      background: 'linear-gradient(to bottom, transparent 40%, rgba(10, 20, 29, 0.95))',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'flex-end',
-                      padding: '2rem'
-                    }}
-                  >
-                    <span style={{ color: '#BD954B', fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 500 }}>
-                      {t('collections.collectionNum')} 0{idx + 1}
-                    </span>
-                    <h3 style={{ fontFamily: 'var(--font-serif)', color: '#ffffff', fontSize: '1.4rem', marginBottom: '0.5rem' }}>
-                      {language === 'tr' ? item.titleTr : item.titleEn}
-                    </h3>
-                    <p style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.9rem', fontWeight: 300, lineHeight: '1.4' }}>
-                      {language === 'tr' ? item.descriptionTr : item.descriptionEn}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                });
+            const maxRow = Math.max(4, ...gridItems.map((item: any) => (item.gridRowEnd || 2) - 1));
+
+            return (
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(12, 1fr)', 
+                gridTemplateRows: isMobile ? 'none' : `repeat(${maxRow}, 1fr)`,
+                gridAutoRows: isMobile ? 'minmax(180px, auto)' : 'none',
+                gap: '1rem',
+                width: '100%',
+                aspectRatio: isMobile ? 'auto' : '12 / 5.5',
+                padding: '0 2rem',
+                boxSizing: 'border-box'
+              }}>
+                {gridItems.map((item: any, idx: number) => {
+                  const tilt = galleryTilt[item.id] || { x: 0, y: 0 };
+                  return (
+                    <div
+                      key={item.id}
+                      onMouseMove={(e) => handleGalleryMouseMove(item.id, e)}
+                      onMouseLeave={() => handleGalleryMouseLeave(item.id)}
+                      onClick={() => {
+                        if (item.image) {
+                          setActiveLightboxImage(item.image);
+                          resetZoom();
+                        }
+                      }}
+                      style={{
+                        gridColumnStart: item.gridColumnStart,
+                        gridColumnEnd: item.gridColumnEnd,
+                        gridRowStart: item.gridRowStart,
+                        gridRowEnd: item.gridRowEnd,
+                        position: 'relative',
+                        minHeight: isMobile ? '260px' : 'auto',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        cursor: 'pointer',
+                        transform: `perspective(800px) rotateX(${tilt.y * -5}deg) rotateY(${tilt.x * 5}deg)`,
+                        transition: 'transform 0.1s ease, box-shadow 0.3s',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                      }}
+                    >
+                      <Image
+                        src={item.image || '/assets/fabric.png'}
+                        alt={language === 'tr' ? item.titleTr : item.titleEn}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 800px"
+                        style={{
+                          objectFit: 'cover',
+                          transform: `scale(1.1) translate(${tilt.x * -8}px, ${tilt.y * -8}px)`,
+                          transition: 'transform 0.1s ease',
+                          zIndex: -1
+                        }}
+                      />
+                      <div 
+                        style={{ 
+                          position: 'absolute', 
+                          inset: 0, 
+                          background: 'linear-gradient(to bottom, transparent 40%, rgba(10, 20, 29, 0.95))',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'flex-end',
+                          padding: '2rem'
+                        }}
+                      >
+                        <span style={{ color: '#BD954B', fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 500 }}>
+                          {t('collections.collectionNum')} 0{idx + 1}
+                        </span>
+                        <h3 style={{ fontFamily: 'var(--font-serif)', color: '#ffffff', fontSize: '1.4rem', marginBottom: '0.5rem' }}>
+                          {language === 'tr' ? item.titleTr : item.titleEn}
+                        </h3>
+                        <p style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: '0.9rem', fontWeight: 300, lineHeight: '1.4' }}>
+                          {language === 'tr' ? item.descriptionTr : item.descriptionEn}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
         </div>
       </section>
 
@@ -724,6 +764,7 @@ export default function HomeClient({
           onMouseMove={handleLightboxMouseMove}
           onMouseUp={handleLightboxMouseUp}
           onMouseLeave={handleLightboxMouseUp}
+          onWheel={handleLightboxWheel}
         >
           {/* Close Area Backdrop */}
           <div 
@@ -735,8 +776,8 @@ export default function HomeClient({
           <div 
             style={{
               position: 'relative',
-              width: '90vw',
-              height: '85vh',
+              width: '80vw',
+              height: '70vh',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

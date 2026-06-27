@@ -111,22 +111,9 @@ const PRESET_LAYOUTS = [
     nameTr: '2 Sütun (Sağ Bölünmüş)',
     nameEn: '2 Columns (Right Split)',
     items: [
-      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 7, gridRowStart: 1, gridRowEnd: 3 },
-      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 7, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 7, gridColumnEnd: 13, gridRowStart: 2, gridRowEnd: 3 },
-    ]
-  },
-  {
-    id: 'preset3',
-    nameTr: '3x2 Eşit Izgara',
-    nameEn: '3x2 Equal Grid',
-    items: [
-      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 5, gridColumnEnd: 9, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '4', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 2, gridRowEnd: 3 },
-      { id: '5', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 5, gridColumnEnd: 9, gridRowStart: 2, gridRowEnd: 3 },
-      { id: '6', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 2, gridRowEnd: 3 },
+      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 7, gridRowStart: 1, gridRowEnd: 5 },
+      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 7, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 3 },
+      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 7, gridColumnEnd: 13, gridRowStart: 3, gridRowEnd: 5 },
     ]
   },
   {
@@ -134,11 +121,11 @@ const PRESET_LAYOUTS = [
     nameTr: '3 Sütun (Orta Boylu)',
     nameEn: '3 Columns (Middle Tall)',
     items: [
-      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 5, gridColumnEnd: 9, gridRowStart: 1, gridRowEnd: 3 },
-      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '4', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 2, gridRowEnd: 3 },
-      { id: '5', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 2, gridRowEnd: 3 },
+      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 1, gridRowEnd: 3 },
+      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 5, gridColumnEnd: 9, gridRowStart: 1, gridRowEnd: 5 },
+      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 3 },
+      { id: '4', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 3, gridRowEnd: 5 },
+      { id: '5', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 3, gridRowEnd: 5 },
     ]
   },
   {
@@ -146,9 +133,9 @@ const PRESET_LAYOUTS = [
     nameTr: '2 Sütun (Sol Bölünmüş)',
     nameEn: '2 Columns (Left Split)',
     items: [
-      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 7, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 7, gridRowStart: 2, gridRowEnd: 3 },
-      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 7, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 3 },
+      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 7, gridRowStart: 1, gridRowEnd: 3 },
+      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 7, gridRowStart: 3, gridRowEnd: 5 },
+      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 7, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 5 },
     ]
   },
   {
@@ -156,10 +143,10 @@ const PRESET_LAYOUTS = [
     nameTr: 'Asimetrik Modern',
     nameEn: 'Asymmetric Modern',
     items: [
-      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 9, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 2 },
-      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 2, gridRowEnd: 3 },
-      { id: '4', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 5, gridColumnEnd: 13, gridRowStart: 2, gridRowEnd: 3 },
+      { id: '1', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 9, gridRowStart: 1, gridRowEnd: 3 },
+      { id: '2', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 9, gridColumnEnd: 13, gridRowStart: 1, gridRowEnd: 3 },
+      { id: '3', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 1, gridColumnEnd: 5, gridRowStart: 3, gridRowEnd: 5 },
+      { id: '4', image: '', titleTr: '', titleEn: '', descriptionTr: '', descriptionEn: '', gridColumnStart: 5, gridColumnEnd: 13, gridRowStart: 3, gridRowEnd: 5 },
     ]
   }
 ];
@@ -181,12 +168,111 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
   const dragStart = useRef({ x: 0, y: 0 });
   const imgRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [dragState, setDragState] = useState<{
+    mode: 'move' | 'resize' | null;
+    itemId: string | null;
+    startX: number;
+    startY: number;
+    startColStart: number;
+    startColEnd: number;
+    startRowStart: number;
+    startRowEnd: number;
+  } | null>(null);
+
+  const previewGridRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (initialConfig && initialConfig.items && initialConfig.items.length > 0) {
       setConfig(initialConfig);
     }
   }, [initialConfig]);
+
+  const maxRow = Math.max(4, ...config.items.map(item => (item.gridRowEnd || 2) - 1));
+
+  useEffect(() => {
+    if (!dragState) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!previewGridRef.current || !dragState.itemId) return;
+
+      const rect = previewGridRef.current.getBoundingClientRect();
+      const colWidth = rect.width / 12;
+      const rowHeight = rect.height / maxRow;
+
+      const deltaX = e.clientX - dragState.startX;
+      const deltaY = e.clientY - dragState.startY;
+
+      const deltaCols = Math.round(deltaX / colWidth);
+      const deltaRows = Math.round(deltaY / rowHeight);
+
+      if (dragState.mode === 'move') {
+        const spanCols = dragState.startColEnd - dragState.startColStart;
+        const spanRows = dragState.startRowEnd - dragState.startRowStart;
+
+        let newColStart = Math.max(1, Math.min(13 - spanCols, dragState.startColStart + deltaCols));
+        let newColEnd = newColStart + spanCols;
+
+        let newRowStart = Math.max(1, Math.min(7 - spanRows, dragState.startRowStart + deltaRows));
+        let newRowEnd = newRowStart + spanRows;
+
+        const updatedItems = config.items.map(item => {
+          if (item.id === dragState.itemId) {
+            return {
+              ...item,
+              gridColumnStart: newColStart,
+              gridColumnEnd: newColEnd,
+              gridRowStart: newRowStart,
+              gridRowEnd: newRowEnd
+            };
+          }
+          return item;
+        });
+        updateConfig({ ...config, items: updatedItems });
+      } else if (dragState.mode === 'resize') {
+        let newColEnd = Math.max(dragState.startColStart + 1, Math.min(13, dragState.startColEnd + deltaCols));
+        let newRowEnd = Math.max(dragState.startRowStart + 1, Math.min(7, dragState.startRowEnd + deltaRows));
+
+        const updatedItems = config.items.map(item => {
+          if (item.id === dragState.itemId) {
+            return {
+              ...item,
+              gridColumnEnd: newColEnd,
+              gridRowEnd: newRowEnd
+            };
+          }
+          return item;
+        });
+        updateConfig({ ...config, items: updatedItems });
+      }
+    };
+
+    const handleMouseUp = () => {
+      setDragState(null);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [dragState, config, maxRow]);
+
+  const handleGridMouseDown = (e: React.MouseEvent, item: GridItem, mode: 'move' | 'resize') => {
+    if (config.layoutType !== 'custom') return;
+    e.stopPropagation();
+    setSelectedItemId(item.id);
+    setDragState({
+      mode,
+      itemId: item.id,
+      startX: e.clientX,
+      startY: e.clientY,
+      startColStart: item.gridColumnStart || 1,
+      startColEnd: item.gridColumnEnd || 5,
+      startRowStart: item.gridRowStart || 1,
+      startRowEnd: item.gridRowEnd || 2,
+    });
+  };
 
   const updateConfig = (newConfig: ReferencesConfig) => {
     setConfig(newConfig);
@@ -209,7 +295,6 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
     } else {
       const preset = PRESET_LAYOUTS.find(p => p.id === type);
       if (preset) {
-        // Keep existing titles, descriptions and images if indexes match
         newItems = preset.items.map((presetItem, idx) => {
           const existing = config.items[idx];
           return {
@@ -258,12 +343,11 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
   };
 
   const handleDeleteItem = (itemId: string) => {
-    if (config.items.length <= 1) return;
     const updatedItems = config.items.filter(item => item.id !== itemId);
     const updated = { ...config, items: updatedItems };
     updateConfig(updated);
     if (selectedItemId === itemId) {
-      setSelectedItemId(updatedItems[0].id);
+      setSelectedItemId(updatedItems[0]?.id || null);
     }
   };
 
@@ -480,24 +564,30 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
           </div>
 
           {/* 12-Column Responsive CSS Grid Canvas */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(12, 1fr)',
-            gridAutoRows: '120px',
-            gap: '8px',
-            backgroundColor: 'rgba(0,0,0,0.3)',
-            padding: '12px',
-            borderRadius: '6px',
-            border: '1px dashed rgba(255,255,255,0.1)',
-            minHeight: '300px',
-            position: 'relative'
-          }}>
+          <div 
+            ref={previewGridRef}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(12, 1fr)',
+              gridTemplateRows: `repeat(${maxRow}, 1fr)`,
+              gap: '8px',
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              padding: '12px',
+              borderRadius: '6px',
+              border: '1px dashed rgba(255,255,255,0.1)',
+              position: 'relative',
+              width: '100%',
+              aspectRatio: '12 / 5.5',
+              boxSizing: 'border-box'
+            }}
+          >
             {config.items.map((item, idx) => {
               const isSelected = item.id === selectedItemId;
               return (
                 <div
                   key={item.id}
                   onClick={() => setSelectedItemId(item.id)}
+                  onMouseDown={(e) => handleGridMouseDown(e, item, 'move')}
                   style={{
                     gridColumnStart: item.gridColumnStart,
                     gridColumnEnd: item.gridColumnEnd,
@@ -506,7 +596,7 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
                     backgroundColor: isSelected ? 'rgba(189,149,75,0.18)' : 'rgba(255,255,255,0.03)',
                     border: `2px ${isSelected ? 'solid' : 'dashed'} ${isSelected ? 'var(--color-accent)' : 'rgba(255,255,255,0.2)'}`,
                     borderRadius: '8px',
-                    cursor: 'pointer',
+                    cursor: config.layoutType === 'custom' ? 'move' : 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -518,6 +608,7 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
                     backgroundImage: item.image ? `url(${item.image})` : 'none',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
+                    userSelect: 'none'
                   }}
                 >
                   {/* Backdrop Overlay if has image */}
@@ -530,7 +621,7 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
                     }} />
                   )}
 
-                  <div style={{ zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <div style={{ zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', pointerEvents: 'none' }}>
                     <span style={{
                       background: isSelected ? 'var(--color-accent)' : 'rgba(255,255,255,0.1)',
                       color: isSelected ? '#000' : '#FFF',
@@ -547,31 +638,48 @@ export default function ReferencesGridEditor({ initialConfig, onChange, language
                   </div>
 
                   {config.layoutType === 'custom' && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteItem(item.id);
-                      }}
-                      style={{
-                        position: 'absolute',
-                        top: '4px',
-                        right: '4px',
-                        background: 'rgba(239, 68, 68, 0.8)',
-                        color: '#FFF',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '18px',
-                        height: '18px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '10px',
-                        cursor: 'pointer',
-                        zIndex: 3
-                      }}
-                    >
-                      ✕
-                    </button>
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteItem(item.id);
+                        }}
+                        onMouseDown={(e) => e.stopPropagation()} // Prevent triggering drag move
+                        style={{
+                          position: 'absolute',
+                          top: '4px',
+                          right: '4px',
+                          background: 'rgba(239, 68, 68, 0.8)',
+                          color: '#FFF',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '18px',
+                          height: '18px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          cursor: 'pointer',
+                          zIndex: 3
+                        }}
+                      >
+                        ✕
+                      </button>
+                      <div
+                        onMouseDown={(e) => handleGridMouseDown(e, item, 'resize')}
+                        style={{
+                          position: 'absolute',
+                          bottom: '0',
+                          right: '0',
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'se-resize',
+                          background: 'linear-gradient(135deg, transparent 50%, var(--color-accent) 50%)',
+                          borderBottomRightRadius: '6px',
+                          zIndex: 10
+                        }}
+                      />
+                    </>
                   )}
                 </div>
               );

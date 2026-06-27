@@ -160,7 +160,7 @@ export default function ServicesPage() {
   }, [rawServices]);
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 2rem' }}>
+    <div className="hizmetler-container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 2rem' }}>
       <header style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
         <h1 className="section-title" style={{ fontSize: '3rem', marginBottom: '1rem' }}>
           {language === 'tr' ? 'Hizmetlerimiz' : 'Our Services'}
@@ -170,7 +170,7 @@ export default function ServicesPage() {
         </p>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
+      <div className="hizmetler-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
         {servicesList.map((srv, idx) => (
           <ServiceCard key={srv.id || idx} srv={srv} idx={idx} language={language} />
         ))}

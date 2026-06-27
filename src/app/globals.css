@@ -1967,3 +1967,99 @@ input[type="number"] {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* ==========================================
+   Mobile Responsive Overrides
+   ========================================== */
+@media (max-width: 1024px) {
+  .products-catalog-layout {
+    grid-template-columns: 220px 1fr !important;
+  }
+  .measure-wizard-layout {
+    grid-template-columns: 220px 1fr !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Common container adjustments */
+  .hizmetler-container,
+  .rehber-container,
+  .rehber-detail-container,
+  .products-catalog-container,
+  .product-detail-container,
+  .measure-wizard-layout {
+    padding: 5rem 1rem 2rem !important;
+  }
+
+  /* Hizmetler Page */
+  .hizmetler-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Rehber Page */
+  .rehber-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Rehber Detail Page */
+  .rehber-detail-title {
+    font-size: 2rem !important;
+  }
+  .rehber-detail-image-wrapper {
+    height: 240px !important;
+    margin-bottom: 2rem !important;
+  }
+
+  /* Products Catalog Page */
+  .products-catalog-layout {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  .products-catalog-sidebar {
+    padding: 1.5rem !important;
+  }
+  .products-catalog-sorting {
+    justify-content: center !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Product Detail Page */
+  .product-detail-layout {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  .product-detail-image-wrapper {
+    height: 350px !important;
+  }
+  .product-detail-title {
+    font-size: 2rem !important;
+    white-space: normal !important;
+  }
+
+  /* Measure Wizard Page */
+  .measure-wizard-layout {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding-top: 5rem !important;
+  }
+  .measure-wizard-sidebar {
+    position: relative !important;
+    top: 0 !important;
+    margin-bottom: 1rem !important;
+  }
+  .measure-wizard-title {
+    font-size: 2rem !important;
+    white-space: normal !important;
+  }
+  .measure-wizard-preview-layout {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  .measure-wizard-preview-container {
+    min-height: 350px !important;
+  }
+}
+

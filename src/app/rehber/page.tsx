@@ -19,7 +19,7 @@ export default function GuidePage() {
   }, [rawGuides]);
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 2rem 3rem' }}>
+    <div className="rehber-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '6rem 2rem 3rem' }}>
       <header style={{ textAlign: 'center', marginBottom: '5rem' }}>
         <h1 className="section-title" style={{ fontSize: '3rem', marginBottom: '1rem' }}>
           {language === 'tr' ? 'Rehber ve Blog' : 'Guides & Blog'}
@@ -29,7 +29,7 @@ export default function GuidePage() {
         </p>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+      <div className="rehber-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
         {guidesList.map((post) => (
           <Link 
             key={post.id}

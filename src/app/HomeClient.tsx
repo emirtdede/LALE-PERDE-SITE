@@ -226,41 +226,61 @@ export default function HomeClient({
   };
 
   // Lightbox Handlers
-  const handleLightboxMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsLightboxDragging(true);
-    lightboxDragStart.current = { x: e.clientX - lightboxOffset.x, y: e.clientY - lightboxOffset.y };
-  };
-
-  const handleLightboxMouseMove = (e: React.MouseEvent) => {
-    if (!isLightboxDragging) return;
-    setLightboxOffset({
-      x: e.clientX - lightboxDragStart.current.x,
-      y: e.clientY - lightboxDragStart.current.y
-    });
-  };
-
-  const handleLightboxMouseUp = () => {
-    setIsLightboxDragging(false);
-  };
-
-  const handleLightboxWheel = (e: React.WheelEvent) => {
-    const zoomStep = 0.15;
-    if (e.deltaY < 0) {
-      setLightboxZoom(prev => Math.min(prev + zoomStep, 4));
+  const handleLightboxPointerDown = (e: React.PointerEvent) => {
+    if (lightboxZoom > 1) {
+      setIsLightboxDragging(true);
+      lightboxDragStart.current = { x: e.clientX - lightboxOffset.x, y: e.clientY - lightboxOffset.y };
+      e.currentTarget.setPointerCapture(e.pointerId);
     } else {
-      setLightboxZoom(prev => Math.max(prev - zoomStep, 0.5));
+      setLightboxZoom(1.5);
     }
   };
 
+  const handleLightboxPointerMove = (e: React.PointerEvent) => {
+    if (isLightboxDragging && lightboxZoom > 1) {
+      setLightboxOffset({
+        x: e.clientX - lightboxDragStart.current.x,
+        y: e.clientY - lightboxDragStart.current.y
+      });
+    }
+  };
+
+  const handleLightboxPointerUp = (e: React.PointerEvent) => {
+    setIsLightboxDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
+  const handleLightboxWheel = (e: React.WheelEvent) => {
+    const zoomStep = 0.125;
+    setLightboxZoom(prev => {
+      let nextScale = prev;
+      if (e.deltaY < 0) {
+        nextScale = Math.min(prev + zoomStep, 4);
+      } else {
+        nextScale = Math.max(prev - zoomStep, 1);
+      }
+      if (nextScale <= 1) {
+        setLightboxOffset({ x: 0, y: 0 });
+      }
+      return nextScale;
+    });
+  };
+
   const zoomIn = () => setLightboxZoom(prev => Math.min(prev + 0.25, 4));
-  const zoomOut = () => setLightboxZoom(prev => Math.max(prev - 0.25, 0.5));
+  const zoomOut = () => setLightboxZoom(prev => {
+    const next = prev - 0.25;
+    if (next <= 1) {
+      setLightboxOffset({ x: 0, y: 0 });
+      return 1;
+    }
+    return next;
+  });
   const resetZoom = () => {
     setLightboxZoom(1);
     setLightboxOffset({ x: 0, y: 0 });
   };
 
-  // Keyboard ESC Listener
+  // Keyboard ESC Listener & Scroll Lock
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -269,9 +289,13 @@ export default function HomeClient({
     };
     if (activeLightboxImage) {
       window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
     }
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
     };
   }, [activeLightboxImage]);
 
@@ -762,9 +786,6 @@ export default function HomeClient({
             overflow: 'hidden',
             userSelect: 'none'
           }}
-          onMouseMove={handleLightboxMouseMove}
-          onMouseUp={handleLightboxMouseUp}
-          onMouseLeave={handleLightboxMouseUp}
           onWheel={handleLightboxWheel}
         >
           {/* Close Area Backdrop */}
@@ -775,6 +796,11 @@ export default function HomeClient({
 
           {/* Interactive Zoomable Image */}
           <div 
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={handleLightboxPointerDown}
+            onPointerMove={handleLightboxPointerMove}
+            onPointerUp={handleLightboxPointerUp}
+            onPointerCancel={handleLightboxPointerUp}
             style={{
               position: 'relative',
               width: '80vw',
@@ -783,9 +809,9 @@ export default function HomeClient({
               alignItems: 'center',
               justifyContent: 'center',
               zIndex: 2,
-              cursor: isLightboxDragging ? 'grabbing' : 'grab',
+              cursor: lightboxZoom > 1 ? (isLightboxDragging ? 'grabbing' : 'grab') : 'zoom-in',
+              touchAction: 'none'
             }}
-            onMouseDown={handleLightboxMouseDown}
           >
             <img 
               src={activeLightboxImage} 
@@ -796,7 +822,8 @@ export default function HomeClient({
                 maxHeight: '100%',
                 objectFit: 'contain',
                 transform: `translate(${lightboxOffset.x}px, ${lightboxOffset.y}px) scale(${lightboxZoom})`,
-                transition: isLightboxDragging ? 'none' : 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                transition: isLightboxDragging ? 'none' : 'transform 0.25s cubic-bezier(0.1, 0.8, 0.25, 1)',
+                pointerEvents: 'none',
                 transformOrigin: 'center center',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
                 borderRadius: '8px'
@@ -804,122 +831,115 @@ export default function HomeClient({
             />
           </div>
 
-          {/* Controls HUD */}
+          {/* Zoom controls panel */}
           <div 
+            onClick={(e) => e.stopPropagation()}
             style={{
               position: 'absolute',
-              bottom: '2.5rem',
-              left: '50%',
-              transform: 'translateX(-50%)',
+              top: '20px',
+              right: '20px',
               display: 'flex',
-              alignItems: 'center',
-              gap: '1rem',
-              background: 'rgba(15, 24, 32, 0.85)',
-              border: '1px solid rgba(189, 149, 75, 0.3)',
-              padding: '0.8rem 1.5rem',
+              gap: '10px',
+              zIndex: 1000000,
+              backgroundColor: 'rgba(15, 27, 39, 0.85)',
+              padding: '8px 12px',
               borderRadius: '30px',
-              zIndex: 10,
-              boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-              backdropFilter: 'blur(5px)'
+              border: '1px solid rgba(189, 149, 75, 0.3)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(10px)'
             }}
           >
-            {/* Zoom Out Button */}
-            <button 
-              onClick={(e) => { e.stopPropagation(); zoomOut(); }}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#FFF',
-                fontSize: '1.2rem',
-                cursor: 'pointer',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'background 0.2s',
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              —
-            </button>
-
-            {/* Current Zoom Level / Reset */}
-            <span 
-              onClick={(e) => { e.stopPropagation(); resetZoom(); }}
-              style={{
-                color: '#BD954B',
-                fontSize: '0.9rem',
-                fontWeight: 600,
-                cursor: 'pointer',
-                letterSpacing: '1px',
-                minWidth: '50px',
-                textAlign: 'center'
-              }}
-              title="Sıfırla / Reset"
-            >
-              {Math.round(lightboxZoom * 100)}%
-            </span>
-
-            {/* Zoom In Button */}
             <button 
               onClick={(e) => { e.stopPropagation(); zoomIn(); }}
               style={{
-                background: 'transparent',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#FFF',
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+              title={language === 'tr' ? 'Yakınlaştır' : 'Zoom In'}
+            >
+              +
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); zoomOut(); }}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#FFF',
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+              title={language === 'tr' ? 'Uzaklaştır' : 'Zoom Out'}
+            >
+              -
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); resetZoom(); }}
+              style={{
+                padding: '0 12px',
+                height: '36px',
+                borderRadius: '18px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#FFF',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+            >
+              {language === 'tr' ? 'Sıfırla' : 'Reset'}
+            </button>
+            <button 
+              onClick={() => setActiveLightboxImage(null)}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--color-accent)',
                 border: 'none',
                 color: '#FFF',
-                fontSize: '1.2rem',
+                fontSize: '1rem',
+                fontWeight: 'bold',
                 cursor: 'pointer',
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
                 display: 'flex',
-                alignItems: 'center',
                 justifyContent: 'center',
-                transition: 'background 0.2s',
+                alignItems: 'center',
+                transition: 'opacity 0.2s'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
+              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
             >
-              ＋
+              ✕
             </button>
           </div>
-
-          {/* Top Right Close Button */}
-          <button 
-            onClick={() => setActiveLightboxImage(null)}
-            style={{
-              position: 'absolute',
-              top: '2rem',
-              right: '2rem',
-              background: 'rgba(15, 24, 32, 0.85)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#FFF',
-              width: '44px',
-              height: '44px',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              fontSize: '1.2rem',
-              zIndex: 10,
-              boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
-              transition: 'all 0.2s'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(189, 149, 75, 0.5)';
-              e.currentTarget.style.color = '#BD954B';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-              e.currentTarget.style.color = '#FFF';
-            }}
-          >
-            ✕
-          </button>
         </div>
       )}
     </>

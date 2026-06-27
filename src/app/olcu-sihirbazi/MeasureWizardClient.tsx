@@ -357,11 +357,11 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
   }
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 5rem', minHeight: 'calc(100vh - 220px)', display: 'grid', gridTemplateColumns: '280px 1fr', gap: '4rem', alignItems: 'center' }}>
+    <div className="measure-wizard-layout" style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 5rem', minHeight: 'calc(100vh - 220px)', display: 'grid', gridTemplateColumns: '280px 1fr', gap: '4rem', alignItems: 'center' }}>
       
       {/* Left Sidebar Layout */}
-      <aside style={{ position: 'sticky', top: '100px' }}>
-        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '2.5rem', color: 'var(--color-text)', marginBottom: '1rem', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
+      <aside className="measure-wizard-sidebar" style={{ position: 'sticky', top: '100px' }}>
+        <h1 className="measure-wizard-title" style={{ fontFamily: 'var(--font-serif)', fontSize: '2.5rem', color: 'var(--color-text)', marginBottom: '1rem', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
           {language === 'tr' ? 'Ölçü Sihirbazı' : 'Measure Wizard'}
         </h1>
         <p style={{ opacity: 0.8, fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '3rem' }}>
@@ -765,11 +765,12 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
               </div>
 
               {/* Grid aligning heights between columns */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 380px', gap: '2.5rem', alignItems: 'stretch' }}>
+              <div className="measure-wizard-preview-layout" style={{ display: 'grid', gridTemplateColumns: '1.25fr 380px', gap: '2.5rem', alignItems: 'stretch' }}>
                 
                 {/* LEFT: 2D Interactive Preview */}
                 <div 
                   ref={containerRef}
+                  className="measure-wizard-preview-container"
                   style={{ 
                     position: 'relative', 
                     backgroundColor: '#0a111a', 
@@ -1030,7 +1031,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
                 </div>
 
                 {/* RIGHT: Specs & Input Fields */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div className="measure-wizard-controls-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   
                   {/* How to measure guide hint */}
                   <div style={{ padding: '1.5rem', backgroundColor: 'var(--color-card-bg)', border: '1px solid var(--color-border)', borderRadius: '8px' }}>

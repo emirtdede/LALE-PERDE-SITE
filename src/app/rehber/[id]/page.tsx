@@ -43,7 +43,7 @@ export default function GuideDetailPage() {
   const summary = language === 'tr' ? post.summaryTr : post.summaryEn;
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px 2rem 5rem' }}>
+    <div className="rehber-detail-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px 2rem 5rem' }}>
       <Link 
         href="/rehber" 
         style={{ 
@@ -67,6 +67,7 @@ export default function GuideDetailPage() {
             {new Date(post.date).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')} • 3 min read
           </span>
           <h1 
+            className="rehber-detail-title"
             style={{ 
               fontFamily: 'var(--font-serif)', 
               fontSize: '3rem', 
@@ -83,7 +84,7 @@ export default function GuideDetailPage() {
           </p>
         </header>
 
-        <div style={{ position: 'relative', height: '400px', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden', marginBottom: '3rem' }}>
+        <div className="rehber-detail-image-wrapper" style={{ position: 'relative', height: '400px', border: '1px solid var(--color-border)', borderRadius: '12px', overflow: 'hidden', marginBottom: '3rem' }}>
           <Image src={post.image} alt={title} fill style={{ objectFit: 'cover' }} priority />
         </div>
 

@@ -116,7 +116,7 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
   });
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 2rem' }}>
+    <div className="products-catalog-container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 2rem' }}>
       <header style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
         <h1 className="section-title" style={{ fontSize: '3rem', marginBottom: '1rem' }}>
           {t('catalog.title')}
@@ -127,7 +127,7 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
       </header>
 
       {/* Sorting dropdown at the top right of the whole section before the grid */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
+      <div className="products-catalog-sorting" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
           <label style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-accent)', margin: 0, fontWeight: 500 }}>
             {t('catalog.sort')}:
@@ -154,9 +154,9 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '2rem' }}>
+      <div className="products-catalog-layout" style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '2rem' }}>
         {/* Sidebar Filters */}
-        <aside style={{ backgroundColor: 'var(--color-neutral)', padding: '2rem', borderRadius: '8px', border: '1px solid var(--color-border)', height: 'fit-content' }}>
+        <aside className="products-catalog-sidebar" style={{ backgroundColor: 'var(--color-neutral)', padding: '2rem', borderRadius: '8px', border: '1px solid var(--color-border)', height: 'fit-content' }}>
           <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', marginBottom: '1.5rem', color: 'var(--color-primary)' }}>
             {t('catalog.filterTitle')}
           </h3>

@@ -23,6 +23,64 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
   const [activeImage, setActiveImage] = useState<string>('');
   const [isRedirecting, setIsRedirecting] = useState(false);
 
+  // Image zoom lightbox states
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (zoomScale > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } else {
+      setZoomScale(1.5);
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (isDragging && zoomScale > 1) {
+      setPanOffset({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      });
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    const zoomFactor = 0.125;
+    setZoomScale(prev => {
+      let nextScale = prev;
+      if (e.deltaY < 0) {
+        nextScale = Math.min(prev + zoomFactor, 4);
+      } else {
+        nextScale = Math.max(prev - zoomFactor, 1);
+      }
+      if (nextScale <= 1) {
+        setPanOffset({ x: 0, y: 0 });
+      }
+      return nextScale;
+    });
+  };
+
+  useEffect(() => {
+    if (isZoomOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isZoomOpen]);
+
   // Measuring inputs
   const [width, setWidth] = useState<string>('');
   const [height, setHeight] = useState<string>('');
@@ -90,15 +148,19 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
   };
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 4rem', minHeight: 'calc(100vh - 220px)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div className="product-detail-container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '6rem 2rem 4rem', minHeight: 'calc(100vh - 220px)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <Link href="/urunler" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2.5rem', color: 'var(--color-accent)', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>
         ← {t('catalog.backToCatalog')}
       </Link>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '4rem', alignItems: 'start' }}>
+      <div className="product-detail-layout" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '4rem', alignItems: 'start' }}>
         {/* Left Column: Image Gallery */}
         <div>
-          <div style={{ position: 'relative', height: '550px', border: '1px solid var(--color-border)', borderRadius: '8px', overflow: 'hidden', marginBottom: '1.5rem', backgroundColor: 'var(--color-neutral)' }}>
+          <div 
+            className="product-detail-image-wrapper" 
+            onClick={() => { setIsZoomOpen(true); setZoomScale(1); setPanOffset({ x: 0, y: 0 }); }}
+            style={{ position: 'relative', height: '550px', border: '1px solid var(--color-border)', borderRadius: '8px', overflow: 'hidden', marginBottom: '1.5rem', backgroundColor: 'var(--color-neutral)', cursor: 'zoom-in' }}
+          >
             <Image 
               src={activeImage || '/assets/hero.png'} 
               alt={language === 'tr' ? product.nameTr : product.nameEn}
@@ -135,7 +197,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
           <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--color-accent)', letterSpacing: '0.05em', fontWeight: 600 }}>
             {language === 'tr' ? product.categoryTr : product.categoryEn}
           </span>
-          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '3rem', margin: '0.5rem 0 1.5rem', color: 'var(--color-primary)', whiteSpace: 'nowrap' }}>
+          <h1 className="product-detail-title" style={{ fontFamily: 'var(--font-serif)', fontSize: '3rem', margin: '0.5rem 0 1.5rem', color: 'var(--color-primary)', whiteSpace: 'nowrap' }}>
             {language === 'tr' ? product.nameTr : product.nameEn}
           </h1>
 
@@ -289,6 +351,188 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
                 width: '0%',
                 animation: 'fillProgress 2.8s linear forwards'
               }} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox / Zoom Modal Overlay */}
+      {isZoomOpen && (
+        <div 
+          onClick={() => setIsZoomOpen(false)}
+          onWheel={handleWheel}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(10, 17, 24, 0.95)',
+            zIndex: 999999,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'zoom-out',
+            animation: 'fadeIn 0.25s ease-out'
+          }}
+        >
+          {/* Zoom controls panel */}
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              display: 'flex',
+              gap: '10px',
+              zIndex: 1000000,
+              backgroundColor: 'rgba(15, 27, 39, 0.85)',
+              padding: '8px 12px',
+              borderRadius: '30px',
+              border: '1px solid rgba(189, 149, 75, 0.3)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(10px)'
+            }}
+          >
+            <button 
+              onClick={() => setZoomScale(prev => Math.min(prev + 0.25, 4))}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#FFF',
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+              title={language === 'tr' ? 'Yakınlaştır' : 'Zoom In'}
+            >
+              +
+            </button>
+            <button 
+              onClick={() => setZoomScale(prev => {
+                const next = prev - 0.25;
+                if (next <= 1) {
+                  setPanOffset({ x: 0, y: 0 });
+                  return 1;
+                }
+                return next;
+              })}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#FFF',
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+              title={language === 'tr' ? 'Uzaklaştır' : 'Zoom Out'}
+            >
+              -
+            </button>
+            <button 
+              onClick={() => { setZoomScale(1); setPanOffset({ x: 0, y: 0 }); }}
+              style={{
+                padding: '0 12px',
+                height: '36px',
+                borderRadius: '18px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#FFF',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+            >
+              {language === 'tr' ? 'Sıfırla' : 'Reset'}
+            </button>
+            <button 
+              onClick={() => setIsZoomOpen(false)}
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--color-accent)',
+                border: 'none',
+                color: '#FFF',
+                fontSize: '1rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transition: 'opacity 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.opacity = '0.9'}
+              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Draggable/Pannable Image Container */}
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            style={{
+              position: 'relative',
+              width: '90%',
+              height: '80%',
+              maxWidth: '1000px',
+              maxHeight: '700px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden',
+              cursor: zoomScale > 1 ? 'grab' : 'zoom-in',
+              touchAction: 'none'
+            }}
+          >
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                height: '100%',
+                transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomScale})`,
+                transition: isDragging ? 'none' : 'transform 0.25s cubic-bezier(0.1, 0.8, 0.25, 1)',
+                pointerEvents: 'none',
+                userSelect: 'none'
+              }}
+            >
+              <Image 
+                src={activeImage || '/assets/hero.png'} 
+                alt={language === 'tr' ? product.nameTr : product.nameEn}
+                fill
+                style={{ objectFit: 'contain' }}
+                priority
+                unoptimized
+              />
             </div>
           </div>
         </div>

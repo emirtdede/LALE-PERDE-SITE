@@ -356,6 +356,11 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
           >
             <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: getStepColor(1), marginBottom: '0.3rem', fontWeight: 600 }}>{t('wizard.stepLabel')} 01</div>
             <div style={{ fontSize: '1rem', color: step >= 1 ? 'var(--color-text)' : '#5C6C7C', fontWeight: 500, textTransform: 'uppercase' }}>1. {t('wizard.step1Name')}</div>
+            {selectedUsage && (
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-accent)', marginTop: '0.2rem', fontWeight: 500 }}>
+                ✓ {CATEGORY_LIMITS[selectedUsage]?.label || selectedUsage}
+              </div>
+            )}
           </div>
           <div 
             onClick={() => { if (selectedUsage) setStep(2) }}
@@ -363,6 +368,11 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
           >
             <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: getStepColor(2), marginBottom: '0.3rem', fontWeight: 600 }}>{t('wizard.stepLabel')} 02</div>
             <div style={{ fontSize: '1rem', color: step >= 2 ? 'var(--color-text)' : '#5C6C7C', fontWeight: 500, textTransform: 'uppercase' }}>2. {t('wizard.step2Name')}</div>
+            {selectedProduct && (
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-accent)', marginTop: '0.2rem', fontWeight: 500 }}>
+                ✓ {language === 'tr' ? selectedProduct.nameTr : selectedProduct.nameEn}
+              </div>
+            )}
           </div>
           <div 
             onClick={() => { if (selectedProduct) setStep(3) }}
@@ -370,6 +380,11 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
           >
             <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: getStepColor(3), marginBottom: '0.3rem', fontWeight: 600 }}>{t('wizard.stepLabel')} 03</div>
             <div style={{ fontSize: '1rem', color: step >= 3 ? 'var(--color-text)' : '#5C6C7C', fontWeight: 500, textTransform: 'uppercase' }}>3. {t('wizard.step3Name')}</div>
+            {selectedSubtype && (
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-accent)', marginTop: '0.2rem', fontWeight: 500 }}>
+                ✓ {selectedSubtype}
+              </div>
+            )}
           </div>
           <div 
             onClick={() => { if (selectedSubtype) setStep(4) }}
@@ -383,6 +398,68 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
 
       {/* Main Content Area */}
       <div>
+        {/* Universal Selection Trail Breadcrumb Banner */}
+        {selectedUsage && (
+          <div 
+            className="wizard-breadcrumb-banner"
+            style={{ 
+              marginBottom: '2rem', 
+              padding: '0.8rem 1.2rem', 
+              background: 'rgba(26, 46, 64, 0.5)', 
+              border: '1px solid rgba(189, 149, 75, 0.3)', 
+              borderRadius: '8px',
+              display: 'flex', 
+              alignItems: 'center', 
+              flexWrap: 'wrap',
+              gap: '0.6rem', 
+              fontSize: '0.9rem', 
+              fontWeight: 600, 
+              letterSpacing: '0.03em',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+            }}
+          >
+            <span 
+              onClick={() => setStep(1)} 
+              style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+              onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
+              onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+              title={language === 'tr' ? '1. Adıma Git (Kullanım Alanı)' : 'Go to Step 1'}
+            >
+              🏷️ {CATEGORY_LIMITS[selectedUsage]?.label || selectedUsage}
+            </span>
+
+            {selectedProduct && (
+              <>
+                <span style={{ color: '#5C6C7C', fontWeight: 300 }}>&gt;</span>
+                <span 
+                  onClick={() => setStep(2)} 
+                  style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                  title={language === 'tr' ? '2. Adıma Git (Ürün Seçimi)' : 'Go to Step 2'}
+                >
+                  {language === 'tr' ? selectedProduct.nameTr : selectedProduct.nameEn}
+                </span>
+              </>
+            )}
+
+            {selectedSubtype && (
+              <>
+                <span style={{ color: '#5C6C7C', fontWeight: 300 }}>&gt;</span>
+                <span 
+                  onClick={() => setStep(3)} 
+                  style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                  title={language === 'tr' ? '3. Adıma Git (Montaj Tipi)' : 'Go to Step 3'}
+                >
+                  {selectedSubtype}
+                </span>
+              </>
+            )}
+          </div>
+        )}
+
         {/* STEP 1: Usage Area Selection */}
         {step === 1 && (
           <div>
@@ -661,10 +738,9 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
             </svg>
           );
 
-          const usageLabel = language === 'tr' ? CATEGORY_LIMITS[selectedUsage].label : CATEGORY_LIMITS[selectedUsage].labelEn;
+          const usageLabel = CATEGORY_LIMITS[selectedUsage]?.label ? (language === 'tr' ? CATEGORY_LIMITS[selectedUsage].label : CATEGORY_LIMITS[selectedUsage].labelEn) : selectedUsage;
           const productLabel = language === 'tr' ? selectedProduct.nameTr : selectedProduct.nameEn;
           const subtypeLabel = selectedSubtype || '';
-          const breadcrumbTitle = [usageLabel, productLabel, subtypeLabel].filter(Boolean).join(' > ');
 
           // Curtain sizing percentages relative to max limits (scaled to 78% to leave room for labels/handles)
           const curtainWidthPercent = Math.max(20, Math.min(90, (width / maxLimitWidth) * 78));
@@ -676,43 +752,6 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
 
           return (
             <div>
-              {/* Clickable Breadcrumbs selection title */}
-              <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                <span 
-                  onClick={() => setStep(1)} 
-                  style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
-                  onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-                  title={language === 'tr' ? 'Kullanım Alanı Adımına Git' : 'Go to Usage Area Step'}
-                >
-                  {usageLabel}
-                </span>
-                <span style={{ color: '#5C6C7C' }}>&gt;</span>
-                <span 
-                  onClick={() => setStep(2)} 
-                  style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
-                  onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
-                  onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-                  title={language === 'tr' ? 'Ürün Seçimi Adımına Git' : 'Go to Product Selection Step'}
-                >
-                  {productLabel}
-                </span>
-                {subtypeLabel && (
-                  <>
-                    <span style={{ color: '#5C6C7C' }}>&gt;</span>
-                    <span 
-                      onClick={() => setStep(3)} 
-                      style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
-                      onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
-                      onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-                      title={language === 'tr' ? 'Mekanizma Adımına Git' : 'Go to Mechanism Step'}
-                    >
-                      {subtypeLabel}
-                    </span>
-                  </>
-                )}
-              </div>
-
               {/* Grid aligning heights between columns */}
               <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 380px', gap: '2.5rem', alignItems: 'stretch' }}>
                 

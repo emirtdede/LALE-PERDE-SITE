@@ -1117,7 +1117,154 @@ footer {
   transform: translateY(0);
 }
 
-/* Responsive Design */
+/* Responsive Design & Mobile Navigation Drawer */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 102;
+}
+
+.mobile-menu-toggle span {
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-accent);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-menu-toggle.open span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+
+.mobile-menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-toggle.open span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Mobile Drawer Overlay */
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 18, 26, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-drawer-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-drawer-content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  max-width: 85vw;
+  height: 100%;
+  background: var(--color-primary);
+  border-left: 1px solid rgba(189, 149, 75, 0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem 2rem;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] .mobile-drawer-content {
+  background: var(--color-card-bg);
+  border-left: 1px solid var(--color-border);
+}
+
+.mobile-drawer-overlay.active .mobile-drawer-content {
+  transform: translateX(0);
+}
+
+.mobile-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(189, 149, 75, 0.2);
+}
+
+.mobile-drawer-close {
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.mobile-drawer-close:hover {
+  background: var(--color-accent);
+  color: var(--color-primary);
+}
+
+.mobile-drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.mobile-drawer-nav a {
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  transition: var(--transition-fast);
+}
+
+[data-theme="light"] .mobile-drawer-nav a {
+  color: var(--color-text-dark);
+}
+
+.mobile-drawer-nav a:hover,
+.mobile-drawer-nav a.active {
+  color: var(--color-accent) !important;
+  padding-left: 8px;
+}
+
+.mobile-drawer-footer {
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(189, 149, 75, 0.2);
+}
+
+.mobile-drawer-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Breakpoints */
 @media (max-width: 1200px) {
   .collections-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1138,43 +1285,177 @@ footer {
   }
 }
 
+@media (max-width: 992px) {
+  header#main-header nav.desktop-nav {
+    display: none !important;
+  }
+  
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
+}
+
 @media (max-width: 768px) {
-  header {
-    padding: 1.5rem 2rem;
+  header#main-header {
+    padding: 1.2rem 1.5rem !important;
+    grid-template-columns: auto 1fr auto;
   }
   
-  header.scrolled {
-    padding: 1rem 2rem;
-  }
-  
-  nav {
-    display: none; /* Modern minimal version can have hamburger or hidden menu, or simple inline flow */
+  header#main-header.scrolled,
+  header#main-header.not-home {
+    padding: 1rem 1.5rem !important;
   }
   
   .hero-title {
-    font-size: 3.2rem;
+    font-size: 2.8rem !important;
   }
   
   .section-title {
-    font-size: 2.8rem;
+    font-size: 2.2rem !important;
   }
   
   .collections-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
-  
+  section {
+    padding: 3rem 1.5rem !important;
+    min-height: auto !important;
+  }
+
+  .story-img-container {
+    height: 350px !important;
+  }
+
+  .fabric-showcase {
+    height: 40vh !important;
+    min-height: 280px !important;
+  }
+
+  .fabric-title {
+    font-size: 2.5rem !important;
+  }
+
   .appointment-form {
-    padding: 2.5rem 1.5rem;
+    padding: 2rem 1.2rem !important;
+    left: 0 !important;
   }
   
   .form-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
   }
   
   .form-group.full-width {
-    grid-column: span 1;
+    grid-column: span 1 !important;
+  }
+
+  .cta-group {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .btn-primary, .btn-outline {
+    width: 100%;
+    text-align: center;
+    padding: 1rem 1.5rem;
+  }
+
+  /* 1. Görsel (Hikayemiz): Logo üste, yazılar aşağı iniyor ve küçültülüyor */
+  .story-container {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+  .story-logo-wrapper {
+    order: 1 !important;
+  }
+  .story-content {
+    order: 2 !important;
+  }
+  .story-content .section-title {
+    font-size: 1.8rem !important;
+  }
+  .story-content .story-text {
+    font-size: 0.95rem !important;
+  }
+  .story-content .story-quote {
+    font-size: 1.05rem !important;
+  }
+
+  /* 2. Görsel (Ölçü Sihirbazı): Yazılar yukarı, panel aşağı iniyor ve küçültülüyor */
+  .wizard-promo-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+  .wizard-text-block {
+    order: 1 !important;
+  }
+  .wizard-visual-block {
+    order: 2 !important;
+  }
+  .wizard-text-block h2 {
+    font-size: 2rem !important;
+  }
+  .wizard-text-block p {
+    font-size: 0.95rem !important;
+  }
+
+  /* 3. Görsel (Müşteri Yorumları): Başlık üste, yorumlar aşağı iniyor */
+  .comments-section {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  .comments-section .container {
+    width: 100% !important;
+    margin-bottom: 2rem !important;
+  }
+
+  /* Koleksiyonlar Carousel Navigasyon Butonları Çakışma Önleme */
+  .kinetic-carousel-wrapper {
+    padding: 1.5rem 0 !important;
+  }
+  .kinetic-carousel-wheel {
+    width: 220px !important;
+    height: 350px !important;
+  }
+  .carousel-nav-btn {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 1.2rem !important;
+  }
+  .carousel-nav-btn.prev {
+    left: 8px !important;
+  }
+  .carousel-nav-btn.next {
+    right: 8px !important;
   }
 }
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1.3rem !important;
+  }
+  .hero-subtitle {
+    font-size: 0.85rem !important;
+    letter-spacing: 0.15em !important;
+  }
+  .kinetic-carousel-wheel {
+    width: 195px !important;
+    height: 320px !important;
+  }
+  .carousel-nav-btn {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1.1rem !important;
+  }
+  .carousel-nav-btn.prev {
+    left: 4px !important;
+  }
+  .carousel-nav-btn.next {
+    right: 4px !important;
+  }
+}
+
 
 
 /* Header Search & Controls Styling added by Antigravity */
@@ -1540,14 +1821,40 @@ header#main-header.not-home.has-banner.scrolled + main {
 
 @media (max-width: 768px) {
   .professional-footer {
-    padding: 4rem 2rem 2rem;
+    padding: 3rem 1.5rem 2rem !important;
   }
   .professional-footer .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+    margin-bottom: 2.5rem !important;
   }
   .footer-col-map {
-    grid-column: span 1;
+    grid-column: span 1 !important;
+  }
+  .footer-bottom-flex {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 1.2rem !important;
+  }
+  .footer-copyright {
+    text-align: center !important;
+    width: 100% !important;
+  }
+  .footer-legal-links {
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-desc {
+    max-width: 100% !important;
+  }
+  .footer-social-links {
+    flex-wrap: wrap !important;
   }
 }
 

@@ -330,11 +330,12 @@ export default function HomeClient({
       </section>
 
       {/* 2. KINETIC LOGO SECTION (PHILOSOPHY) */}
-      <section id="hikayemiz" style={{ padding: '6rem 0', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-neutral)', position: 'relative' }}>
-        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center', width: '100%' }}>
+      <section id="hikayemiz" className="story-section" style={{ padding: '6rem 0', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-neutral)', position: 'relative' }}>
+        <div className="container story-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center', width: '100%' }}>
           
           {/* Particles logo rendering box without border frame */}
           <div 
+            className="story-logo-wrapper"
             style={{ 
               width: '100%',
               display: 'flex',
@@ -386,12 +387,12 @@ export default function HomeClient({
       </section>
 
       {/* 4. MEASURE WIZARD PROMO SECTION (REDESIGNED LUXURY SEGMENT) */}
-      <section style={{ padding: '7rem 0', background: 'var(--color-neutral)', overflow: 'hidden' }}>
+      <section className="wizard-promo-section" style={{ padding: '7rem 0', background: 'var(--color-neutral)', overflow: 'hidden' }}>
         <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '4rem', alignItems: 'stretch' }}>
+          <div className="wizard-promo-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '4rem', alignItems: 'stretch' }}>
             
             {/* Left side: Guide and Steps */}
-            <div>
+            <div className="wizard-text-block">
               <span className="section-label" style={{ color: '#BD954B', letterSpacing: '3px' }}>
                 {language === 'tr' ? 'MİLİMETRİK HESAPLAMA' : 'PRECISE CALCULATION'}
               </span>
@@ -464,7 +465,7 @@ export default function HomeClient({
             </div>
 
             {/* Right side: Embedded Measure Promo Visual Component */}
-            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <div className="wizard-visual-block" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
               <MeasurePromoVisual />
             </div>
 
@@ -587,7 +588,7 @@ export default function HomeClient({
       </section>
 
       {/* 6. YORUMLAR (MARQUEE RIBBON) */}
-      <section style={{ padding: '2rem 0 6rem 0', background: '#0A141D' }}>
+      <section className="comments-section" style={{ padding: '2rem 0 6rem 0', background: '#0A141D' }}>
         <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <LineDivider />

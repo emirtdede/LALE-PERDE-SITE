@@ -137,6 +137,12 @@ export const Header: React.FC = () => {
     }
   };
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   if (pathname?.startsWith('/admin')) {
     return null;
   }
@@ -171,6 +177,7 @@ export const Header: React.FC = () => {
               e.preventDefault();
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+            setMobileMenuOpen(false);
           }}
         >
           <div className="logo">
@@ -180,7 +187,7 @@ export const Header: React.FC = () => {
         </Link>
 
         {!pathname?.startsWith('/admin') && (
-          <nav suppressHydrationWarning>
+          <nav className="desktop-nav" suppressHydrationWarning>
             <Link suppressHydrationWarning href="/urunler" className={pathname?.startsWith('/urunler') ? 'active' : ''}>{t('nav.products')}</Link>
             <Link suppressHydrationWarning href="/hizmetler" className={pathname === '/hizmetler' ? 'active' : ''}>{t('nav.services')}</Link>
             <Link suppressHydrationWarning href="/rehber" className={pathname?.startsWith('/rehber') ? 'active' : ''}>{t('nav.guide')}</Link>
@@ -221,6 +228,18 @@ export const Header: React.FC = () => {
             {language === 'tr' ? 'EN' : 'TR'}
           </button>
 
+          {!pathname?.startsWith('/admin') && (
+            <button 
+              className={`mobile-menu-toggle ${mobileMenuOpen ? 'open' : ''}`}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Menu"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          )}
+
           {pathname?.startsWith('/admin') && (
             <Link 
               href="/"
@@ -255,6 +274,45 @@ export const Header: React.FC = () => {
           )}
         </div>
       </header>
+
+      {/* Mobile Drawer Menu Overlay */}
+      {!pathname?.startsWith('/admin') && (
+        <div className={`mobile-drawer-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+          <div className="mobile-drawer-content" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-drawer-header">
+              <div className="logo">
+                <Image src="/assets/laleperdelogo.svg" alt="Lale Perde" className="logo-icon" width={32} height={32} />
+                <span className="logo-text" style={{ fontSize: '1.5rem' }}>LALE PERDE</span>
+              </div>
+              <button className="mobile-drawer-close" onClick={() => setMobileMenuOpen(false)}>✕</button>
+            </div>
+
+            <nav className="mobile-drawer-nav">
+              <Link href="/" className={pathname === '/' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>{t('nav.home')}</Link>
+              <Link href="/urunler" className={pathname?.startsWith('/urunler') ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>{t('nav.products')}</Link>
+              <Link href="/hizmetler" className={pathname === '/hizmetler' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>{t('nav.services')}</Link>
+              <Link href="/rehber" className={pathname?.startsWith('/rehber') ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>{t('nav.guide')}</Link>
+              <Link href="/olcu-sihirbazi" className={pathname === '/olcu-sihirbazi' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>{t('nav.wizard')}</Link>
+              <Link href="/iletisim" className={pathname === '/iletisim' ? 'active' : ''} onClick={() => setMobileMenuOpen(false)}>{t('nav.contact')}</Link>
+            </nav>
+
+            <div className="mobile-drawer-footer">
+              <div className="mobile-drawer-controls">
+                <button className="theme-toggle-btn" onClick={toggleTheme} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+                  <span>{!mounted ? '☾' : (theme === 'light' ? '☾ Koyu Mod' : '☼ Aydınlık Mod')}</span>
+                </button>
+                <button 
+                  className="lang-switch-btn" 
+                  onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
+                  style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}
+                >
+                  {language === 'tr' ? 'EN - English' : 'TR - Türkçe'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

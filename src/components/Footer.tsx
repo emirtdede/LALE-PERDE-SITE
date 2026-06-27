@@ -176,9 +176,9 @@ export const Footer: React.FC = () => {
         </div>
       </div>
       <div className="footer-bottom" style={{ borderTop: '1px solid var(--color-border)', paddingTop: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-          <p style={{ margin: 0, color: 'var(--color-accent)' }}>&copy; {currentYear} Lale Perde. {t('footer.allRightsReserved')}</p>
-          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+        <div className="footer-bottom-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+          <p className="footer-copyright" style={{ margin: 0, color: 'var(--color-accent)' }}>&copy; {currentYear} Lale Perde. {t('footer.allRightsReserved')}</p>
+          <div className="footer-legal-links" style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
             <Link href="/gizlilik-politikasi" style={{ fontSize: '0.85rem', opacity: 0.8, textDecoration: 'none', color: 'rgba(255, 255, 255, 0.7)', transition: 'var(--transition-smooth)' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--color-accent)'} onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)'}>
               {t('footer.gizlilik')}
             </Link>

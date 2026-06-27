@@ -5,21 +5,27 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '../../../context/LanguageContext';
-import { guidesList, GuidePost } from '../guidesData';
+import { useDb } from '../../../context/DbContext';
+import { GuideItem } from '../../../context/dbTypes';
 
 export default function GuideDetailPage() {
   const { language } = useLanguage();
   const params = useParams();
   const id = params.id as string;
+  const { guides, fetchGuidesLazy } = useDb();
 
-  const [post, setPost] = useState<GuidePost | null>(null);
+  const [post, setPost] = useState<GuideItem | null>(null);
 
   useEffect(() => {
-    const found = guidesList.find(g => g.id === id);
+    fetchGuidesLazy?.();
+  }, [fetchGuidesLazy]);
+
+  useEffect(() => {
+    const found = guides.find(g => g.id === id);
     if (found) {
       setPost(found);
     }
-  }, [id]);
+  }, [id, guides]);
 
   if (!post) {
     return (
@@ -34,6 +40,7 @@ export default function GuideDetailPage() {
 
   const title = language === 'tr' ? post.titleTr : post.titleEn;
   const content = language === 'tr' ? post.contentTr : post.contentEn;
+  const summary = language === 'tr' ? post.summaryTr : post.summaryEn;
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px 2rem 5rem' }}>
@@ -57,7 +64,7 @@ export default function GuideDetailPage() {
       <article>
         <header style={{ marginBottom: '3rem' }}>
           <span style={{ fontSize: '0.85rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            {post.date} • {language === 'tr' ? post.readTimeTr : post.readTimeEn}
+            {new Date(post.date).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')} • 3 min read
           </span>
           <h1 
             style={{ 
@@ -72,7 +79,7 @@ export default function GuideDetailPage() {
             {title}
           </h1>
           <p style={{ fontSize: '1.2rem', opacity: 0.85, lineHeight: 1.6, fontStyle: 'italic', color: 'var(--color-text)' }}>
-            {language === 'tr' ? post.descTr : post.descEn}
+            {summary}
           </p>
         </header>
 

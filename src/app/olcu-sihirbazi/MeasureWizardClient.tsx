@@ -752,6 +752,62 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
 
           return (
             <div>
+              {/* Prominent Active Selection Trail Header */}
+              <div 
+                className="step4-active-selection-header"
+                style={{ 
+                  marginBottom: '1.8rem', 
+                  padding: '1rem 1.5rem', 
+                  backgroundColor: 'rgba(26, 46, 64, 0.75)', 
+                  border: '1px solid var(--color-accent)', 
+                  borderRadius: '10px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  flexWrap: 'wrap',
+                  gap: '0.8rem', 
+                  fontSize: '1rem', 
+                  fontWeight: 700, 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.05em',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.35)',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                <span 
+                  onClick={() => setStep(1)} 
+                  style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                  onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                  title={language === 'tr' ? '1. Adıma Git (Kullanım Alanı)' : 'Go to Step 1'}
+                >
+                  🏷️ {usageLabel}
+                </span>
+                <span style={{ color: '#5C6C7C', fontWeight: 300 }}>&gt;</span>
+                <span 
+                  onClick={() => setStep(2)} 
+                  style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
+                  onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                  title={language === 'tr' ? '2. Adıma Git (Ürün Seçimi)' : 'Go to Step 2'}
+                >
+                  {productLabel}
+                </span>
+                {subtypeLabel && (
+                  <>
+                    <span style={{ color: '#5C6C7C', fontWeight: 300 }}>&gt;</span>
+                    <span 
+                      onClick={() => setStep(3)} 
+                      style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
+                      onMouseOver={(e) => e.currentTarget.style.opacity = '0.7'}
+                      onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                      title={language === 'tr' ? '3. Adıma Git (Montaj Tipi)' : 'Go to Step 3'}
+                    >
+                      {subtypeLabel}
+                    </span>
+                  </>
+                )}
+              </div>
+
               {/* Grid aligning heights between columns */}
               <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 380px', gap: '2.5rem', alignItems: 'stretch' }}>
                 

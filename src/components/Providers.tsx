@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { LanguageProvider } from '../context/LanguageContext';
 import { ThemeProvider } from '../context/ThemeContext';
-import { DbProvider, useDb } from '../context/DbContext';
+import { DbProvider, useDb, InitialDbData } from '../context/DbContext';
 import { VisitorLog } from '../context/dbTypes';
 
 const VisitorTracker: React.FC = () => {
@@ -16,7 +16,7 @@ const VisitorTracker: React.FC = () => {
     const handleUnload = () => {
       if (currentLogId) {
         const dwellTime = Math.floor((Date.now() - startTime) / 1000);
-        updateVisitorLogDwellTime(currentLogId, dwellTime);
+        navigator.sendBeacon('/api/public/logs', JSON.stringify({ type: 'visitor_duration', id: currentLogId, data: { duration: dwellTime } }));
         localStorage.setItem('lale_perde_last_dwell', dwellTime.toString());
       }
     };
@@ -28,7 +28,7 @@ const VisitorTracker: React.FC = () => {
       if (localVisitorStr) {
         try {
           localVisitor = JSON.parse(localVisitorStr);
-        } catch (_e) {
+        } catch {
           localVisitor = null;
         }
       }
@@ -92,10 +92,10 @@ const VisitorTracker: React.FC = () => {
 import { GoogleAdsProvider } from '../context/GoogleAdsContext';
 import GoogleAdsTracker from './GoogleAdsTracker';
 
-export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const Providers: React.FC<{ children: React.ReactNode; initialData?: InitialDbData | null }> = ({ children, initialData }) => {
   return (
     <LanguageProvider>
-      <DbProvider>
+      <DbProvider initialData={initialData}>
         <GoogleAdsProvider>
           <ThemeProvider>
             <VisitorTracker />

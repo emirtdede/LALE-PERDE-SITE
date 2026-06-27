@@ -167,7 +167,6 @@ export default function DashboardTab() {
     if (syncing) return;
 
     // Cooldown check (60 seconds)
-    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
     const lastSyncStr = localStorage.getItem('lale_perde_last_sync_timestamp');
     if (lastSyncStr) {
@@ -196,7 +195,6 @@ export default function DashboardTab() {
       
       if (body.success) {
         // Save current timestamp to localStorage
-        // eslint-disable-next-line react-hooks/purity
         localStorage.setItem('lale_perde_last_sync_timestamp', Date.now().toString());
         setGa4Data(parseGA4Data(body.data));
         setLastUpdated(body.updatedAt);

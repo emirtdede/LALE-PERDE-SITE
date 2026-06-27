@@ -19,12 +19,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   React.useEffect(() => {
     const savedLang = localStorage.getItem('lale_perde_lang') as Language;
-    if (savedLang === 'tr' || savedLang === 'en') {
-      setLanguage(savedLang);
-    } else {
-      const browserLang = navigator.language.startsWith('en') ? 'en' : 'tr';
-      setLanguage(browserLang);
-    }
+    setTimeout(() => {
+      if (savedLang === 'tr' || savedLang === 'en') {
+        setLanguage(savedLang);
+      } else {
+        const browserLang = navigator.language.startsWith('en') ? 'en' : 'tr';
+        setLanguage(browserLang);
+      }
+    }, 0);
   }, []);
 
   const handleSetLanguage = (lang: Language) => {

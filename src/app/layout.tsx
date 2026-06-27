@@ -15,15 +15,58 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({
+import { supabase } from '../lib/supabaseClient';
+import { 
+  mapCategoryFromDb, 
+  mapCurtainTypeFromDb, 
+  mapFabricTypeFromDb, 
+  mapMountingTypeFromDb, 
+  mapSettingsFromDb, 
+  mapHomeContentFromDb 
+} from '../context/dbMappers';
+
+export const revalidate = 60; // Cache data fetching in layout for 60 seconds
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let initialData = null;
+
+  try {
+    const [
+      { data: rawCats },
+      { data: rawCurtains },
+      { data: rawFabrics },
+      { data: rawSettings },
+      { data: rawHome },
+      { data: rawMountings }
+    ] = await Promise.all([
+      supabase.from('categories').select('*').order('display_order', { ascending: true }),
+      supabase.from('curtain_types').select('*').order('display_order', { ascending: true }),
+      supabase.from('fabric_types').select('*').order('display_order', { ascending: true }),
+      supabase.from('site_settings').select('id, store_name, phone, email, address, whatsapp_number, google_maps_embed, announcement_tr, announcement_en, announcement_active, working_hours_tr, working_hours_en, google_ads_id, ads_label_whatsapp, ads_label_contact, shopier_url, instagram_url, facebook_url, linkedin_url, campaign_interval, logo_config'),
+      supabase.from('home_page_content').select('*'),
+      supabase.from('mounting_types').select('*').order('display_order', { ascending: true })
+    ]);
+
+    initialData = {
+      categories: rawCats ? rawCats.map(mapCategoryFromDb) : [],
+      curtainTypes: rawCurtains ? rawCurtains.map(mapCurtainTypeFromDb) : [],
+      fabricTypes: rawFabrics ? rawFabrics.map(mapFabricTypeFromDb) : [],
+      mountingTypes: rawMountings ? rawMountings.map(mapMountingTypeFromDb) : [],
+      settings: (rawSettings && rawSettings[0]) ? mapSettingsFromDb(rawSettings[0]) : null,
+      homeContent: (rawHome && rawHome[0]) ? mapHomeContentFromDb(rawHome[0]) : null,
+    };
+  } catch (err) {
+    console.error('Layout data fetching error:', err);
+  }
+
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html lang="tr" suppressHydrationWarning data-scroll-behavior="smooth">
       <body suppressHydrationWarning>
-        <Providers>
+        <Providers initialData={initialData}>
           <Header />
           <main style={{ flex: 1 }}>
             {children}

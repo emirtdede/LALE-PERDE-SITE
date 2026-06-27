@@ -92,10 +92,10 @@ export default function ParticlesLogo({
   
   // Real-time Physics Parameters States (controlled by the control panel UI)
   const [physics, setPhysics] = useState({
-    interactionRadius: 30,
-    scatterPower: 6.0,
-    returnSpeed: 0.001,
-    friction: 0.86,
+    interactionRadius: interactionRadius,
+    scatterPower: scatterPower,
+    returnSpeed: returnSpeed,
+    friction: friction,
     colorTheme: theme as 'gold' | 'ruby' | 'emerald' | 'sapphire'
   });
 
@@ -178,7 +178,9 @@ export default function ParticlesLogo({
         : interpolateColor(pal.dark, pal.mid, pal.light, fraction);
     });
 
-    setParticles(sampledParticles);
+    setTimeout(() => {
+      setParticles(sampledParticles);
+    }, 0);
   }, [appTheme, physics.colorTheme]);
 
   // Main Canvas Render Physics Loop

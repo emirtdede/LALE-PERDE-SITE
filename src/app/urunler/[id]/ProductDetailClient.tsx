@@ -197,7 +197,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
           <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--color-accent)', letterSpacing: '0.05em', fontWeight: 600 }}>
             {language === 'tr' ? product.categoryTr : product.categoryEn}
           </span>
-          <h1 className="product-detail-title" style={{ fontFamily: 'var(--font-serif)', fontSize: '3rem', margin: '0.5rem 0 1.5rem', color: 'var(--color-primary)', whiteSpace: 'nowrap' }}>
+          <h1 className="product-detail-title" style={{ fontFamily: 'var(--font-serif)', fontSize: '3rem', margin: '0.5rem 0 1.5rem', color: 'var(--color-primary)', whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.2' }}>
             {language === 'tr' ? product.nameTr : product.nameEn}
           </h1>
 
@@ -232,7 +232,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
           {/* Tech specs */}
           <div style={{ marginBottom: '2.5rem' }}>
             <h4 style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--color-accent)', marginBottom: '0.8rem', letterSpacing: '0.05em' }}>
-              Özellikler / Tech Specs
+              {language === 'tr' ? 'Özellikler' : 'Specs'}
             </h4>
             <ul style={{ paddingLeft: '1.2rem', fontSize: '0.95rem', opacity: 0.8 }}>
               {(language === 'tr' ? product.techSpecsTr : product.techSpecsEn).map((spec, i) => (

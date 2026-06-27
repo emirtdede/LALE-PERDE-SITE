@@ -17,69 +17,10 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
+import { sendOTPEmail } from '@/lib/emailService';
+
 // Sadece sunucuda çalışan güvenli rastgele kod üretici
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-// E-posta gönderimi (Dışarıya kapalı yardımcı fonksiyon)
-async function sendOTPEmail(email: string, code: string, type: '2fa' | 'change' | 'reset') {
-  const resendApiKey = process.env.RESEND_API_KEY;
-  if (!resendApiKey) {
-    console.warn('\n[SERVER WARNING] RESEND_API_KEY is undefined. Email sending skipped.\n');
-    return;
-  }
-
-  // Günlük limit kontrolü
-  const { data: settings } = await supabaseAdmin
-    .from('site_settings')
-    .select('email_send_count, last_email_send_date')
-    .eq('id', 'main_settings')
-    .single();
-
-  const todayStr = new Date().toISOString().split('T')[0];
-  let sendCount = settings?.email_send_count || 0;
-  if (settings?.last_email_send_date !== todayStr) sendCount = 0;
-  
-  if (sendCount >= 5) {
-    throw new Error('Günlük e-posta gönderme limitinize (5/5) ulaştınız.');
-  }
-
-  const emailSubject = type === 'change' 
-    ? 'Lale Perde - Güvenlik Bilgisi Değişikliği' 
-    : type === 'reset' 
-    ? 'Lale Perde - Şifre Sıfırlama Kodu' 
-    : 'Lale Perde - 2FA Giriş Kodu';
-    
-  const emailIntro = type === 'change' 
-    ? 'Yönetici güvenlik bilgilerinizi güncellemek için doğrulama kodu:' 
-    : type === 'reset'
-    ? 'Şifrenizi sıfırlamak için doğrulama kodu:'
-    : 'Giriş yapmak için 2FA kodunuz:';
-
-  const resendRes = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendApiKey}` },
-    body: JSON.stringify({
-      from: 'Lale Perde Güvenlik <onboarding@resend.dev>',
-      to: email,
-      subject: emailSubject,
-      html: `
-        <div style="font-family: sans-serif; padding: 25px;">
-          <h2>LALE PERDE</h2>
-          <p>${emailIntro}</p>
-          <h1 style="letter-spacing: 5px;">${code}</h1>
-          <p>Bu kod 5 dakika geçerlidir.</p>
-        </div>
-      `
-    })
-  });
-
-  if (!resendRes.ok) throw new Error('E-posta servisi gönderim hatası verdi.');
-
-  await supabaseAdmin
-    .from('site_settings')
-    .update({ email_send_count: sendCount + 1, last_email_send_date: todayStr })
-    .eq('id', 'main_settings');
-}
 
 // 1. Giriş Ön Kontrolü
 export async function loginAttempt(username: string, password: string) {
@@ -138,7 +79,9 @@ export async function sendLoginOTP(destinationType: 'email' | 'phone', targetEma
       await sendOTPEmail(targetEmail, otp, '2fa');
     } else {
       // TODO: İleride gerçek SMS sağlayıcısı (örn: Netgsm/Twilio) entegre edilecek.
-      console.log('\n[SERVER LOG] SMS 2FA KODU (SIMÜLASYON) - Gönderildi (***)\n');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('\n[SERVER LOG] SMS 2FA KODU (SIMÜLASYON) - Gönderildi (***)\n');
+      }
     }
 
     return { success: true };
@@ -198,7 +141,9 @@ export async function sendSecurityOTP(destinationType: 'email' | 'phone', target
       await sendOTPEmail(targetEmail, otp, 'change');
     } else {
       // TODO: İleride gerçek SMS sağlayıcısı (örn: Netgsm/Twilio) entegre edilecek.
-      console.log('\n[SERVER LOG] SECURITY SMS KODU (SIMÜLASYON) - Gönderildi (***)\n');
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('\n[SERVER LOG] SECURITY SMS KODU (SIMÜLASYON) - Gönderildi (***)\n');
+      }
     }
 
     return { success: true };

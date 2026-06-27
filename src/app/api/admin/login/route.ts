@@ -11,10 +11,15 @@ const getSecretKey = () => {
   return new TextEncoder().encode(process.env.JWT_SECRET);
 };
 
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!supabaseServiceKey) {
+  throw new Error('FATAL: SUPABASE_SERVICE_ROLE_KEY is missing!');
+}
+
 // Create a Supabase client with the Service Role Key to bypass RLS
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  supabaseServiceKey
 );
 
 export async function POST(request: Request) {

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-// @ts-expect-error
-import { Client } from 'pg';
+// Removed pg client as tables are managed via Supabase migrations
 import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
@@ -10,7 +9,6 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-let hasCheckedTable = false;
 
 const getSecretKey = () => {
   if (!process.env.JWT_SECRET) {
@@ -19,50 +17,9 @@ const getSecretKey = () => {
   return new TextEncoder().encode(process.env.JWT_SECRET);
 };
 
+// Tables are managed via Supabase schema migrations
 async function ensureTableExists() {
-  if (hasCheckedTable) return;
-  hasCheckedTable = true;
-  const connectionString = process.env.DATABASE_URL;
-  if (!connectionString) {
-    console.warn('DATABASE_URL is not configured. Cannot ensure table exists via pg.');
-    return;
-  }
-  const client = new Client({ connectionString });
-  try {
-    await client.connect();
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS analytics_cache (
-        id TEXT PRIMARY KEY DEFAULT 'ga4_dashboard_data',
-        data JSONB NOT NULL,
-        updated_at TIMESTAMPTZ DEFAULT NOW(),
-        quota_exceeded BOOLEAN DEFAULT FALSE
-      );
-      INSERT INTO analytics_cache (id, data, updated_at, quota_exceeded)
-      VALUES (
-        'ga4_dashboard_data', 
-        '{"activeUsers": 0, "screenPageViews": 0, "sessions": 0, "whatsappClicks": 0, "mapsClicks": 0, "formSubmits": 0}', 
-        NOW(), 
-        FALSE
-      )
-      ON CONFLICT (id) DO NOTHING;
-
-      CREATE TABLE IF NOT EXISTS form_interactions (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        session_id TEXT NOT NULL,
-        status TEXT NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT NOW(),
-        updated_at TIMESTAMPTZ DEFAULT NOW()
-      );
-    `);
-    // Reload PostgREST schema cache
-    await client.query("NOTIFY pgrst, 'reload schema';");
-  } catch (err: any) {
-    console.warn('Failed to ensure analytics_cache / form_interactions tables exist via direct PG connection:', err.message);
-  } finally {
-    try {
-      await client.end();
-    } catch (e) {}
-  }
+  // No-op
 }
 
 // Helper to sign JWT using native Node.js crypto library

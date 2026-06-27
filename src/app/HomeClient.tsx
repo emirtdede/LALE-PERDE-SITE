@@ -44,9 +44,9 @@ export default function HomeClient({
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { fetchCommentsLazy, comments, homeContent: dbHomeContent } = useDb();
+  const { fetchCommentsLazy, comments, homeContent: dbHomeContent, categories: dbCategories, settings: dbSettings } = useDb();
 
-  const categories = initialCategories;
+  const categories = dbCategories && dbCategories.length > 0 ? dbCategories : initialCategories;
   const services = initialServices && initialServices.length > 0 ? initialServices : [
     {
       id: 'work-1',
@@ -109,7 +109,7 @@ export default function HomeClient({
       focalY: 50
     }
   ];
-  const settings = initialSettings;
+  const settings = dbSettings || initialSettings;
   const homeContent = dbHomeContent || initialHomeContent;
 
   // Lightbox Zoom & Pan states
@@ -129,7 +129,8 @@ export default function HomeClient({
 
   useEffect(() => {
     fetchCommentsLazy?.();
-  }, [fetchCommentsLazy]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Measure wizard Card 3D tilt coordinate state
   const [wizardCoords, setWizardCoords] = useState({ x: 0, y: 0 });

@@ -216,14 +216,14 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
                     onClick={() => setIsCurtainAccordionOpen(!isCurtainAccordionOpen)}
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                   >
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text)' }}>Perde Çeşitleri</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text)' }}>{language === 'tr' ? 'Perde Çeşitleri' : 'Curtain Types'}</span>
                     <span style={{ color: 'var(--color-accent)' }}>{isCurtainAccordionOpen ? '−' : '+'}</span>
                   </div>
                   {isCurtainAccordionOpen && (
                     <div style={{ paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', cursor: 'pointer', color: selectedCurtain === 'all' ? 'var(--color-accent)' : '#A3B3C2' }}>
                         <input type="radio" checked={selectedCurtain === 'all'} onChange={() => { setSelectedCurtain('all'); updateUrl('curtain', 'all'); }} style={{ accentColor: 'var(--color-accent)' }} />
-                        Tümü
+                        {language === 'tr' ? 'Tümü' : 'All'}
                       </label>
                       {activeCurtainTypes.map(c => (
                         <label key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', cursor: 'pointer', color: selectedCurtain === c.id ? 'var(--color-accent)' : '#A3B3C2' }}>
@@ -243,14 +243,14 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
                     onClick={() => setIsFabricAccordionOpen(!isFabricAccordionOpen)}
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                   >
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text)' }}>Kumaş Türleri</span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text)' }}>{language === 'tr' ? 'Kumaş Türleri' : 'Fabric Types'}</span>
                     <span style={{ color: 'var(--color-accent)' }}>{isFabricAccordionOpen ? '−' : '+'}</span>
                   </div>
                   {isFabricAccordionOpen && (
                     <div style={{ paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                       <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', cursor: 'pointer', color: selectedFabric === 'all' ? 'var(--color-accent)' : '#A3B3C2' }}>
                         <input type="radio" checked={selectedFabric === 'all'} onChange={() => { setSelectedFabric('all'); updateUrl('fabric', 'all'); }} style={{ accentColor: 'var(--color-accent)' }} />
-                        Tümü
+                        {language === 'tr' ? 'Tümü' : 'All'}
                       </label>
                       {activeFabricTypes.map(f => (
                         <label key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', cursor: 'pointer', color: selectedFabric === f.id ? 'var(--color-accent)' : '#A3B3C2' }}>

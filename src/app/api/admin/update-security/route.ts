@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!supabaseServiceKey) {
+  throw new Error('FATAL: SUPABASE_SERVICE_ROLE_KEY is missing!');
+}
+
 // Create a Supabase client with the Service Role Key to bypass RLS
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  supabaseServiceKey
 );
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
@@ -75,7 +80,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
 
-  } catch (error) {
-    return NextResponse.json({ error: 'Geçersiz oturum veya sunucu hatası' }, { status: 401 });
+  } catch (error: any) {
+    if (error.code === 'ERR_JWS_INVALID' || error.code === 'ERR_JWT_EXPIRED') {
+      return NextResponse.json({ error: 'Geçersiz veya süresi dolmuş oturum' }, { status: 401 });
+    }
+    console.error('Security Update Error:', error);
+    return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
   }
 }

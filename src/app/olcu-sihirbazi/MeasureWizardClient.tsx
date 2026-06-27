@@ -321,13 +321,20 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
     };
   }, [isDraggingWidth, isDraggingHeight, limits]);
 
+  const getSubtypeLabel = (id: string | null) => {
+    if (!id) return '';
+    const opt = productMountingTypes.find(m => m.id === id);
+    if (opt) return language === 'tr' ? opt.nameTr : (opt.nameEn || opt.nameTr);
+    return id; // fallback for legacy values in localStorage
+  };
+
   const handleWhatsAppQuote = () => {
     if (!settings || !selectedProduct || !selectedUsage) return;
     
     const catName = language === 'tr' ? selectedProduct.categoryTr : selectedProduct.categoryEn;
     const prodName = language === 'tr' ? selectedProduct.nameTr : selectedProduct.nameEn;
     const usageLabel = language === 'tr' ? CATEGORY_LIMITS[selectedUsage].label : CATEGORY_LIMITS[selectedUsage].labelEn;
-    const subtypeLabel = selectedSubtype || (language === 'tr' ? 'Standart' : 'Standard');
+    const subtypeLabel = getSubtypeLabel(selectedSubtype) || (language === 'tr' ? 'Standart' : 'Standard');
     
     const text = `Merhaba, ${catName} / ${prodName} ürünü için kendi aldığım ölçülerle fiyat teklifi almak istiyorum. \n\n*BİLGİLER*\nKullanım Alanı: ${usageLabel}\nAlt Tip / Mekanizma: ${subtypeLabel}\n\n*ÖLÇÜLER*\nPencere Ölçüsü: ${windowWidth}x${windowHeight} cm\nİstenen Perde Ölçüsü: ${width}x${height} cm (En x Boy)\n\nLütfen net fiyat ve keşif için dönüş yapar mısınız?`;
     
@@ -403,7 +410,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
             <div style={{ fontSize: '1rem', color: step >= 3 ? 'var(--color-text)' : '#5C6C7C', fontWeight: 500, textTransform: 'uppercase' }}>3. {t('wizard.step3Name')}</div>
             {selectedSubtype && (
               <div style={{ fontSize: '0.8rem', color: 'var(--color-accent)', marginTop: '0.2rem', fontWeight: 500 }}>
-                ✓ {selectedSubtype}
+                ✓ {getSubtypeLabel(selectedSubtype)}
               </div>
             )}
           </div>
@@ -641,17 +648,17 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
                       borderRadius: '12px',
                       padding: '2rem 1.5rem',
                       cursor: 'pointer',
-                      border: selectedSubtype === labelStr ? '2px solid var(--color-accent)' : '1px solid var(--color-border)',
+                      border: selectedSubtype === opt.id ? '2px solid var(--color-accent)' : '1px solid var(--color-border)',
                       transition: 'all 0.3s ease',
                     }}
                     onMouseOver={(e) => {
-                      if (selectedSubtype !== labelStr) e.currentTarget.style.borderColor = 'rgba(189, 149, 75, 0.5)';
+                      if (selectedSubtype !== opt.id) e.currentTarget.style.borderColor = 'rgba(189, 149, 75, 0.5)';
                     }}
                     onMouseOut={(e) => {
-                      if (selectedSubtype !== labelStr) e.currentTarget.style.borderColor = 'var(--color-border)';
+                      if (selectedSubtype !== opt.id) e.currentTarget.style.borderColor = 'var(--color-border)';
                     }}
                     onClick={() => {
-                      setSelectedSubtype(labelStr);
+                      setSelectedSubtype(opt.id);
                       setStep(4);
                     }}
                   >
@@ -696,7 +703,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
 
           const usageLabel = CATEGORY_LIMITS[selectedUsage]?.label ? (language === 'tr' ? CATEGORY_LIMITS[selectedUsage].label : CATEGORY_LIMITS[selectedUsage].labelEn) : selectedUsage;
           const productLabel = language === 'tr' ? selectedProduct.nameTr : selectedProduct.nameEn;
-          const subtypeLabel = selectedSubtype || '';
+          const subtypeLabel = getSubtypeLabel(selectedSubtype);
 
           // Curtain sizing percentages relative to max limits (scaled to 78% to leave room for labels/handles)
           const curtainWidthPercent = Math.max(20, Math.min(90, (width / maxLimitWidth) * 78));
@@ -738,7 +745,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
                 >
                   🏷️ {usageLabel}
                 </span>
-                <span style={{ color: '#5C6C7C', fontWeight: 300 }}>&gt;</span>
+                <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontWeight: 300 }}>&gt;</span>
                 <span 
                   onClick={() => setStep(2)} 
                   style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}
@@ -750,7 +757,7 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
                 </span>
                 {subtypeLabel && (
                   <>
-                    <span style={{ color: '#5C6C7C', fontWeight: 300 }}>&gt;</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.6)', fontWeight: 300 }}>&gt;</span>
                     <span 
                       onClick={() => setStep(3)} 
                       style={{ color: 'var(--color-accent)', cursor: 'pointer', transition: 'opacity 0.2s' }}

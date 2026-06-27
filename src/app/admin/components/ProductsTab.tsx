@@ -654,10 +654,14 @@ export default function ProductsTab() {
 
     // Sync category names based on selected ID
     const cat = categories.find(c => c.id === editForm.categoryId);
+    const fab = fabricTypes?.find(f => f.id === editForm.fabricTypeId);
+    
     const finalForm = {
       ...editForm,
       categoryTr: cat?.nameTr || editForm.categoryTr,
       categoryEn: cat?.nameEn || editForm.categoryEn,
+      fabricTypeTr: fab?.nameTr || editForm.fabricTypeTr,
+      fabricTypeEn: fab?.nameEn || editForm.fabricTypeEn,
       updatedAt: new Date().toISOString()
     } as Product;
 
@@ -811,6 +815,28 @@ export default function ProductsTab() {
             <div style={{ gridColumn: 'span 2' }}>
               <label style={labelStyle}>{t('admin.products.descEn')}</label>
               <textarea name="descriptionEn" value={editForm.descriptionEn || ''} onChange={handleChange} rows={3} style={inputStyle} />
+            </div>
+
+            {/* Tech Specs */}
+            <div style={{ gridColumn: 'span 2' }}>
+              <label style={labelStyle}>Özellikler / Tech Specs (TR) - Her satıra bir özellik yazın</label>
+              <textarea 
+                value={(editForm.techSpecsTr || []).join('\n')} 
+                onChange={(e) => setEditForm(prev => ({ ...prev, techSpecsTr: e.target.value.split('\n').filter(Boolean) }))} 
+                rows={4} 
+                style={inputStyle} 
+                placeholder="Çamaşır makinesinde yıkanabilir&#10;Ütü gerektirmez&#10;Güneşe dayanıklı" 
+              />
+            </div>
+            <div style={{ gridColumn: 'span 2' }}>
+              <label style={labelStyle}>Özellikler / Tech Specs (EN) - One spec per line</label>
+              <textarea 
+                value={(editForm.techSpecsEn || []).join('\n')} 
+                onChange={(e) => setEditForm(prev => ({ ...prev, techSpecsEn: e.target.value.split('\n').filter(Boolean) }))} 
+                rows={4} 
+                style={inputStyle} 
+                placeholder="Machine washable&#10;No ironing required&#10;Sun resistant" 
+              />
             </div>
 
             {/* Color Palette Management */}

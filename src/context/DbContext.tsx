@@ -171,20 +171,29 @@ export {
   mapMountingTypeToDb
 };
 
-export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [curtainTypes, setCurtainTypes] = useState<CurtainType[]>([]);
-  const [fabricTypes, setFabricTypes] = useState<FabricType[]>([]);
-  const [mountingTypes, setMountingTypes] = useState<MountingType[]>([]);
-  const [settings, setSettings] = useState<SystemSettings | null>(null);
-  const [homeContent, setHomeContent] = useState<HomePageContent | null>(null);
+export interface InitialDbData {
+  categories: Category[];
+  curtainTypes: CurtainType[];
+  fabricTypes: FabricType[];
+  mountingTypes: MountingType[];
+  settings: SystemSettings | null;
+  homeContent: HomePageContent | null;
+}
+
+export const DbProvider: React.FC<{ children: React.ReactNode; initialData?: InitialDbData | null }> = ({ children, initialData }) => {
+  const [categories, setCategories] = useState<Category[]>(initialData?.categories || []);
+  const [curtainTypes, setCurtainTypes] = useState<CurtainType[]>(initialData?.curtainTypes || []);
+  const [fabricTypes, setFabricTypes] = useState<FabricType[]>(initialData?.fabricTypes || []);
+  const [mountingTypes, setMountingTypes] = useState<MountingType[]>(initialData?.mountingTypes || []);
+  const [settings, setSettings] = useState<SystemSettings | null>(initialData?.settings || null);
+  const [homeContent, setHomeContent] = useState<HomePageContent | null>(initialData?.homeContent || null);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [guides, setGuides] = useState<GuideItem[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [inbox, setInbox] = useState<InboxMessage[]>([]);
   const [searchLogs, setSearchLogs] = useState<SearchLog[]>([]);
   const [visitorLogs, setVisitorLogs] = useState<VisitorLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialData);
   const [servicesFetched, setServicesFetched] = useState(false);
   const [guidesFetched, setGuidesFetched] = useState(false);
   const [campaignsFetched, setCampaignsFetched] = useState(false);
@@ -234,8 +243,10 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!initialData) {
+      setTimeout(() => fetchData(), 0);
+    }
+  }, [initialData]);
 
   // LAZY FETCHES
   const fetchServicesLazy = useCallback(async () => {
@@ -753,6 +764,7 @@ export const DbProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     addComment,
     updateComment,
     deleteComment
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [
     categories, curtainTypes, fabricTypes, mountingTypes, settings, homeContent, 
     services, guides, campaigns, inbox, searchLogs, visitorLogs, loading, comments

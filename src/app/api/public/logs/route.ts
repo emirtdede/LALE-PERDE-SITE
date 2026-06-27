@@ -63,16 +63,29 @@ export async function POST(request: Request) {
     }
 
     if (type === 'visitor') {
+      // Validate and sanitize data to prevent DB bloat/injection
+      const safeData = {
+        id: String(data.id).substring(0, 50),
+        city: String(data.city || 'Unknown').substring(0, 100),
+        ip: String(data.ip || '').substring(0, 100),
+        user_agent: String(data.user_agent || data.userAgent || '').substring(0, 500),
+        timestamp: String(data.timestamp || new Date().toISOString()).substring(0, 50),
+        duration: Number(data.duration || 0),
+        is_bot: Boolean(data.is_bot || data.isBot)
+      };
+
       const { data: result, error } = await supabaseAdmin
         .from('visitor_logs')
-        .insert([data])
+        .insert([safeData])
         .select();
         
       if (error) throw error;
       return NextResponse.json({ success: true, data: result });
     } 
     else if (type === 'search') {
-      const { query } = data;
+      const query = String(data.query || '').substring(0, 200).trim();
+      if (!query) return NextResponse.json({ error: 'Empty query' }, { status: 400 });
+
       const { data: existing } = await supabaseAdmin.from('search_logs').select('id, count').eq('query', query).single();
       
       let result, error;

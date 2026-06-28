@@ -1,4 +1,4 @@
-import { supabase } from '../../../lib/supabaseClient';
+import { supabasePublic as supabase } from '../../../lib/supabasePublicServer';
 import { mapProductFromDb } from '../../../context/dbMappers';
 import ProductDetailClient from './ProductDetailClient';
 import { Metadata } from 'next';

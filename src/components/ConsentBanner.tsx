@@ -27,12 +27,12 @@ export const ConsentBanner: React.FC = () => {
   const requestLocation = () => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (_position) => {
+        () => {
           // Location access granted
           // Optional: You can store rough city info in visitor logs if needed
         },
-        (error) => {
-          console.warn('Location access denied:', error.message);
+        () => {
+          // Location access denied
         }
       );
     }
@@ -54,9 +54,8 @@ export const ConsentBanner: React.FC = () => {
   };
 
   const handleRejectAll = () => {
-    const choices = { cookies: true, location: true };
+    const choices = { cookies: false, location: false };
     localStorage.setItem('lale-perde-consent', JSON.stringify(choices));
-    requestLocation();
     setIsVisible(false);
   };
 
@@ -107,18 +106,6 @@ export const ConsentBanner: React.FC = () => {
       fontFamily: 'var(--font-sans)',
       animation: 'slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
     }}>
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes slideUpFade {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}} />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
         <span style={{ fontSize: '1.3rem' }}>🛡️</span>

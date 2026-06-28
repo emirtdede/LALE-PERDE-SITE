@@ -35,12 +35,24 @@ export async function GET() {
     const { payload } = await jwtVerify(token.value, secretKey);
     const username = payload.username as string;
     
-    // Fetch secure settings
-    const { data: authRecord } = await supabaseAdmin
+    // Fetch secure settings - use separate queries to avoid .or() injection
+    let authRecord = null;
+    const { data: byUsername } = await supabaseAdmin
       .from('admin_auth')
       .select('admin_username, admin_email, admin_phone, two_factor_enabled, two_factor_type')
-      .or(`admin_username.eq.${username},admin_email.eq.${username}`)
+      .eq('admin_username', username)
       .maybeSingle();
+    
+    if (byUsername) {
+      authRecord = byUsername;
+    } else {
+      const { data: byEmail } = await supabaseAdmin
+        .from('admin_auth')
+        .select('admin_username, admin_email, admin_phone, two_factor_enabled, two_factor_type')
+        .eq('admin_email', username)
+        .maybeSingle();
+      authRecord = byEmail;
+    }
 
     return NextResponse.json({
       authenticated: true,

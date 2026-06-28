@@ -202,7 +202,7 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [commentsFetched, setCommentsFetched] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -239,16 +239,13 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
     } finally {
       setLoading(false);
     }
-  };
-
-  
-
+  }, []);
 
   useEffect(() => {
     if (!initialData) {
       setTimeout(() => fetchData(), 0);
     }
-  }, [initialData]);
+  }, [initialData, fetchData]);
 
   // LAZY FETCHES
   const fetchServicesLazy = useCallback(async () => {

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   }
 };
 
-import { supabase } from '../lib/supabaseClient';
+import { supabasePublic as supabase } from '../lib/supabasePublicServer';
 import { 
   mapCategoryFromDb, 
   mapCurtainTypeFromDb, 

@@ -26,11 +26,23 @@ const generateOTP = () => crypto.randomInt(100000, 1000000).toString();
 
 // 1. Giriş Ön Kontrolü
 export async function loginAttempt(username: string, password: string) {
-  const { data: authRecord } = await supabaseAdmin
+  let authRecord = null;
+  const { data: byUsername } = await supabaseAdmin
     .from('admin_auth')
     .select('admin_username, admin_email, admin_phone, admin_password_hash, two_factor_enabled, two_factor_type')
-    .or(`admin_username.eq.${username},admin_email.eq.${username}`)
+    .eq('admin_username', username)
     .maybeSingle();
+  
+  if (byUsername) {
+    authRecord = byUsername;
+  } else {
+    const { data: byEmail } = await supabaseAdmin
+      .from('admin_auth')
+      .select('admin_username, admin_email, admin_phone, admin_password_hash, two_factor_enabled, two_factor_type')
+      .eq('admin_email', username)
+      .maybeSingle();
+    authRecord = byEmail;
+  }
 
   if (!authRecord) return { error: 'Güvenlik ayarları okunamadı.' };
 
@@ -158,8 +170,19 @@ export async function verifySecurityOTP(enteredOTP: string) {
 }
 
 // 5. Password Reset OTP
-export async function sendResetOTP(targetEmail: string) {
+export async function sendResetOTP(targetEmailOrUsername: string) {
   try {
+    const { data: adminData } = await supabaseAdmin
+      .from('admin_auth')
+      .select('admin_email')
+      .or(`admin_username.eq."${targetEmailOrUsername}",admin_email.eq."${targetEmailOrUsername}"`)
+      .maybeSingle();
+
+    if (!adminData || !adminData.admin_email) {
+      return { error: 'Sistemde kayıtlı böyle bir iletişim bilgisi bulunamadı.' };
+    }
+
+    const targetEmail = adminData.admin_email;
     const otp = generateOTP();
     
     const token = await new SignJWT({ otp, email: targetEmail })

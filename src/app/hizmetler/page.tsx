@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabaseClient';
+import { supabasePublic as supabase } from '../../lib/supabasePublicServer';
 import { mapServiceFromDb } from '../../context/dbMappers';
 import ServicesClient from './ServicesClient';
 import { Metadata } from 'next';

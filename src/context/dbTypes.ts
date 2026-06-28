@@ -73,6 +73,13 @@ export interface FabricType {
   status: 'active' | 'passive';
 }
 
+export interface AdminOnlySettings {
+  adminUsername: string;
+  adminPasswordHash: string; // bcrypt-hashed password
+  adminPhone: string;
+  adminEmail: string;
+}
+
 export interface SystemSettings {
   storeName: string;
   phone: string;
@@ -85,10 +92,6 @@ export interface SystemSettings {
   announcementActive: boolean;
   workingHoursTr: string;
   workingHoursEn: string;
-  adminUsername: string;
-  adminPasswordHash: string; // Plain password
-  adminPhone: string;
-  adminEmail: string;
   googleAdsId?: string;
   adsLabelWhatsapp?: string;
   adsLabelContact?: string;
@@ -109,6 +112,8 @@ export interface SystemSettings {
     scatterPower: number;
   };
 }
+
+export interface AdminSystemSettings extends SystemSettings, Partial<AdminOnlySettings> {}
 
 export interface HomePageContent {
   philosophyTitleTr: string;

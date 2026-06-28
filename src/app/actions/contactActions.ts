@@ -21,7 +21,10 @@ const contactSchema = z.object({
   subject: z.string().optional(),
   message: z.string().min(5, 'Mesaj çok kısa'),
   type: z.enum(['contact', 'appointment', 'lead']).optional().default('contact'),
-  formId: z.string().optional()
+  formId: z.string().optional(),
+  appointmentDate: z.string().optional().nullable(),
+  appointmentTime: z.string().optional().nullable(),
+  address: z.string().optional().nullable()
 });
 
 export async function submitContactForm(formData: {
@@ -32,6 +35,9 @@ export async function submitContactForm(formData: {
   message: string;
   type?: 'contact' | 'appointment' | 'lead';
   formId?: string;
+  appointmentDate?: string | null;
+  appointmentTime?: string | null;
+  address?: string | null;
 }) {
   try {
     // 1. Validate Input
@@ -57,6 +63,9 @@ export async function submitContactForm(formData: {
       is_read: false,
       is_resolved: false,
       is_archived: false,
+      appointment_date: validatedData.appointmentDate || null,
+      appointment_time: validatedData.appointmentTime || null,
+      address: validatedData.address || null
     };
 
     const { error: dbError } = await supabaseAdmin.from('inbox').insert([insertData]);
@@ -73,7 +82,7 @@ export async function submitContactForm(formData: {
       await fetch(formspreeUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(insertData)
       });
     } catch (formspreeErr) {
       // Sadece konsola yaz, ana akışı bozma çünkü mesaj veritabanına kaydedildi

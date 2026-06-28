@@ -5,6 +5,22 @@ import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 
+// Types for GA4 API Responses
+interface GA4Row {
+  dimensionValues?: { value: string }[];
+  metricValues?: { value: string }[];
+}
+
+interface DailyMetrics {
+  date: string;
+  activeUsers: number;
+  screenPageViews: number;
+  sessions: number;
+  whatsappClicks: number;
+  mapsClicks: number;
+  formSubmits: number;
+}
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -248,9 +264,9 @@ export async function POST() {
 
     // Parse Event Counts Report
     if (reports[1] && reports[1].rows) {
-      reports[1].rows.forEach((row: any) => {
+      reports[1].rows.forEach((row: GA4Row) => {
         const eventName = row.dimensionValues?.[0]?.value;
-        const eventCount = parseInt(row.metricValues?.[0]?.value) || 0;
+        const eventCount = parseInt(row.metricValues?.[0]?.value || '0', 10);
         if (eventName === 'whatsapp_click') {
           whatsappClicks = eventCount;
         } else if (eventName === 'maps_click') {
@@ -262,10 +278,10 @@ export async function POST() {
     }
 
     // Parse Daily Metrics Report combined with Daily Event Counts
-    const dailyMap: { [date: string]: any } = {};
+    const dailyMap: { [date: string]: DailyMetrics } = {};
 
     if (reports[2] && reports[2].rows) {
-      reports[2].rows.forEach((row: any) => {
+      reports[2].rows.forEach((row: GA4Row) => {
         const dateStr = row.dimensionValues?.[0]?.value || ''; // Format YYYYMMDD
         const vals = row.metricValues || [];
         const activeUsersD = parseInt(vals[0]?.value) || 0;
@@ -290,10 +306,10 @@ export async function POST() {
     }
 
     if (reports[3] && reports[3].rows) {
-      reports[3].rows.forEach((row: any) => {
+      reports[3].rows.forEach((row: GA4Row) => {
         const dateStr = row.dimensionValues?.[0]?.value || ''; // Format YYYYMMDD
         const eventName = row.dimensionValues?.[1]?.value || '';
-        const eventCount = parseInt(row.metricValues?.[0]?.value) || 0;
+        const eventCount = parseInt(row.metricValues?.[0]?.value || '0', 10);
 
         let formattedDate = dateStr;
         if (dateStr.length === 8) {
@@ -324,7 +340,7 @@ export async function POST() {
 
     const daily = Object.values(dailyMap);
     // Sort daily data by date ascending
-    daily.sort((a: any, b: any) => a.date.localeCompare(b.date));
+    daily.sort((a: DailyMetrics, b: DailyMetrics) => a.date.localeCompare(b.date));
 
     const payload = {
       activeUsers,
@@ -405,6 +421,20 @@ export async function POST() {
 // GET handler to fetch current cache directly without triggering sync
 export async function GET() {
   try {
+    // Verify admin authentication
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get('admin_session')?.value;
+
+    if (!adminToken) {
+      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
+    }
+
+    try {
+      await jwtVerify(adminToken, getSecretKey());
+    } catch {
+      return NextResponse.json({ error: 'Geçersiz veya süresi dolmuş oturum' }, { status: 401 });
+    }
+
     // Ensure table exists first (non-blocking)
     await ensureTableExists();
 

@@ -1,11 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { useLanguage } from '../context/LanguageContext';
-
 export default function MeasurePromoVisual() {
-  const router = useRouter();
 
   // Local state independent of localStorage
   const [width, setWidth] = useState<number>(300);

@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react';
 import { useAdminDb } from '@/context/AdminDbContext';
-import { SystemSettings } from '@/context/dbTypes';
+import { SystemSettings, AdminSystemSettings } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 import { sendSecurityOTP, verifySecurityOTP } from '../actions/authActions';
 
 export default function SecurityTab() {
   const { settings: dbSettings, updateSettings } = useAdminDb();
   const { t } = useLanguage();
-  const [settings, setSettings] = useState<SystemSettings | null>(null);
+  const [settings, setSettings] = useState<AdminSystemSettings | null>(null);
   const [saved, setSaved] = useState(false);
   const [passwordError, setPasswordError] = useState('');
 
@@ -78,7 +78,7 @@ export default function SecurityTab() {
   const handleStartEdit = (field: 'email' | 'phone') => {
     if (!settings) return;
     setEditingField(field);
-    setNewValueInput(field === 'email' ? settings.adminEmail : settings.adminPhone);
+    setNewValueInput(field === 'email' ? settings.adminEmail || '' : settings.adminPhone || '');
     setVerificationFlow(false);
     setVerificationError('');
     setVerificationInput('');
@@ -105,7 +105,7 @@ export default function SecurityTab() {
     }
 
     setSendingEmail(true);
-    const result = await sendSecurityOTP(settings.adminEmail);
+    const result = await sendSecurityOTP(settings.adminEmail || '');
 
     if (result.error) {
       setVerificationError(result.error);

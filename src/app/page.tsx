@@ -1,20 +1,20 @@
-import { supabase } from '../lib/supabaseClient';
+import { supabasePublic as supabase } from '../lib/supabasePublicServer';
 import HomeClient from './HomeClient';
 import { 
   mapCategoryFromDb, 
-  mapSettingsFromDb, 
   mapHomeContentFromDb, 
   mapServiceFromDb,
   mapProductFromDb
 } from '../context/dbMappers';
+import { ServiceItem, Product, Category, HomePageContent } from '../context/dbTypes';
 
 export const revalidate = 60; // ISR cache for 60 seconds since it's a public landing page
 
 export default async function Home() {
-  let services: any[] = [];
-  let products: any[] = [];
-  let categories: any[] = [];
-  let homeContent: any = null;
+  let services: ServiceItem[] = [];
+  let products: Product[] = [];
+  let categories: Category[] = [];
+  let homeContent: HomePageContent | null = null;
 
   try {
     const [servicesRes, productsRes, catsRes, homeRes] = await Promise.all([

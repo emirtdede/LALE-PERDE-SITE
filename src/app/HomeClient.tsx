@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useLanguage } from '../context/LanguageContext';
 import { useDb } from '../context/DbContext';
 import { useGoogleAds } from '../context/GoogleAdsContext';
@@ -28,10 +27,7 @@ export default function HomeClient({
   initialProducts?: any[];
 }) {
   const { t, language } = useLanguage();
-  const router = useRouter();
   const { trackConversion } = useGoogleAds();
-
-  const [isNight, setIsNight] = useState(false);
 
   // Form states
   const [name, setName] = useState('');
@@ -47,68 +43,9 @@ export default function HomeClient({
   const { fetchCommentsLazy, comments, settings: dbSettings } = useDb();
 
   const categories = initialCategories && initialCategories.length > 0 ? initialCategories : [];
-  const services = initialServices && initialServices.length > 0 ? initialServices : [
-    {
-      id: 'work-1',
-      titleTr: 'Zekeriyaköy Villa Projesi',
-      titleEn: 'Zekeriyaköy Villa Project',
-      descriptionTr: 'Salon ve yatak odalarında keten tül ve motorlu kadife fon perde uygulamaları.',
-      descriptionEn: 'Linen tulle and motorized velvet drapery applications in living room and bedrooms.',
-      image: '/assets/scandi.png',
-      focalX: 50,
-      focalY: 45
-    },
-    {
-      id: 'work-2',
-      titleTr: 'Göktürk Rezidans Penthouse',
-      titleEn: 'Göktürk Residence Penthouse',
-      descriptionTr: 'Minimalist dekorasyona uygun ahşap jaluzi ve modern dalga tül perdeler.',
-      descriptionEn: 'Wooden venetian blinds and modern wave tulle curtains matching minimalist decor.',
-      image: '/assets/fabric.png',
-      focalX: 50,
-      focalY: 50
-    },
-    {
-      id: 'work-3',
-      titleTr: 'Tarabya Yalı Dairesi',
-      titleEn: 'Tarabya Bosphorus Apartment',
-      descriptionTr: 'Boğaz manzarasına eşlik eden premium ipek fon perdeler ve motorlu stor sistemler.',
-      descriptionEn: 'Premium silk draperies and motorized roller systems accompanying the Bosphorus view.',
-      image: '/assets/hero.png',
-      focalX: 50,
-      focalY: 60
-    },
-    {
-      id: 'work-4',
-      titleTr: 'Bebek Sahil Evi',
-      titleEn: 'Bebek Coastal House',
-      descriptionTr: 'Lüks salon alanı için ipek keten tül ve modern katlamalı perde tasarımları.',
-      descriptionEn: 'Silk-linen tulle and modern roman shade designs for the luxury living area.',
-      image: '/assets/fabric.png',
-      focalX: 50,
-      focalY: 50
-    },
-    {
-      id: 'work-5',
-      titleTr: 'Kemerburgaz Konakları',
-      titleEn: 'Kemerburgaz Mansions',
-      descriptionTr: 'Yüksek tavanlı salonlar için akustik özellikli kadife fon perdeler.',
-      descriptionEn: 'Acoustic velvet draperies tailored for high-ceiling living spaces.',
-      image: '/assets/scandi.png',
-      focalX: 50,
-      focalY: 50
-    },
-    {
-      id: 'work-6',
-      titleTr: 'Şişli Modern Ofis',
-      titleEn: 'Şişli Modern Office',
-      descriptionTr: 'Çalışma alanları için motorlu dikey stor ve jaluzi perde otomasyonu.',
-      descriptionEn: 'Motorized vertical roller and venetian blind automation systems for work environments.',
-      image: '/assets/hero.png',
-      focalX: 50,
-      focalY: 50
-    }
-  ];
+  const services = useMemo(() => {
+    return initialServices && initialServices.length > 0 ? initialServices : [];
+  }, [initialServices]);
   const settings = dbSettings || initialSettings;
   const homeContent = initialHomeContent;
 
@@ -129,8 +66,7 @@ export default function HomeClient({
 
   useEffect(() => {
     fetchCommentsLazy?.();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchCommentsLazy]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -148,9 +84,6 @@ export default function HomeClient({
     }
   }, [services]);
 
-  // Measure wizard Card 3D tilt coordinate state
-  const [wizardCoords, setWizardCoords] = useState({ x: 0, y: 0 });
-  const [isWizardHovered, setIsWizardHovered] = useState(false);
 
   // Parallax elements references
   const heroRef = useRef<HTMLDivElement>(null);
@@ -185,7 +118,7 @@ export default function HomeClient({
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [categories]);
+  }, []);
 
   // Appointment Form Submission
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -200,7 +133,10 @@ export default function HomeClient({
       email,
       phone,
       subject: `${service} İçin Keşif Randevusu`,
-      message: `Ev Adresi: ${address}\nTercih Edilen Keşif Tarihi: ${appointmentDate}\nTercih Edilen Keşif Saati: ${appointmentTime}`
+      message: `Ev Adresi: ${address}\nTercih Edilen Keşif Tarihi: ${appointmentDate}\nTercih Edilen Keşif Saati: ${appointmentTime}`,
+      appointmentDate,
+      appointmentTime,
+      address
     });
 
     if (result.error) {
@@ -210,26 +146,17 @@ export default function HomeClient({
       return;
     }
 
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-      setName('');
-      setPhone('');
-      setEmail('');
-      setAppointmentDate('');
-      setAppointmentTime('');
-      setAddress('');
-    }, 1200);
+    setLoading(false);
+    setSubmitted(true);
+    setName('');
+    setPhone('');
+    setEmail('');
+    setAppointmentDate('');
+    setAppointmentTime('');
+    setAddress('');
   };
 
-  // Helper for tracking dynamic cursor coordinates on Measure wizard glass visual
-  const handleWizardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 2 - 1; // Range -1 to 1
-    const y = ((e.clientY - rect.top) / rect.height) * 2 - 1; // Range -1 to 1
-    setWizardCoords({ x, y });
-  };
+
 
   // Helper card style calculation for works gallery tilt
   const [galleryTilt, setGalleryTilt] = useState<{ [key: string]: { x: number; y: number } }>({});

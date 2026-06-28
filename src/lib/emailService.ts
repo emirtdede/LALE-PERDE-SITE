@@ -2,7 +2,7 @@
 export async function sendOTPEmail(email: string, code: string, type: '2fa' | 'change' | 'reset') {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
-    return;
+    throw new Error('RESEND_API_KEY ortam değişkeni eksik. E-posta gönderilemedi.');
   }
 
 

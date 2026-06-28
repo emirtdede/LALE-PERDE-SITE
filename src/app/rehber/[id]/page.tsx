@@ -1,4 +1,4 @@
-import { supabase } from '../../../lib/supabaseClient';
+import { supabasePublic as supabase } from '../../../lib/supabasePublicServer';
 import { mapGuideFromDb } from '../../../context/dbMappers';
 import RehberDetailClient from './RehberDetailClient';
 import { Metadata } from 'next';

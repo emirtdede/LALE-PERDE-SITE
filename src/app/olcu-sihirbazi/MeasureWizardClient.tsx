@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '../../context/LanguageContext';
 import { useDb } from '../../context/DbContext';
@@ -73,7 +73,6 @@ const findCategoryForUsage = (usageKey: string, categoriesList: Category[]) => {
 
 function MeasureWizardContent({ initialProducts, initialCategories, initialMountingTypes = [], initialFabricTypes = [] }: MeasureWizardClientProps) {
   const { t, language } = useLanguage();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { trackConversion } = useGoogleAds();
 
@@ -137,7 +136,7 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
       const prodId = searchParams.get('product');
       if (prodId) {
         hasRestored.current = true;
-        setIsLoaded(true);
+        setTimeout(() => setIsLoaded(true), 0);
         return;
       }
 
@@ -153,28 +152,31 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
       const savedShowWindow = localStorage.getItem('measure_wizard_show_window');
       const savedFabricTypeId = localStorage.getItem('measure_wizard_fabric_type_id');
 
-      if (savedUsage) setSelectedUsage(savedUsage);
-      if (savedCatId && categories.length > 0) {
-        const cat = categories.find(c => c.id === savedCatId);
-        if (cat) setSelectedCat(cat);
-      }
-      if (savedProductId && products.length > 0) {
-        const prod = products.find(p => p.id === savedProductId);
-        if (prod) setSelectedProduct(prod);
-      }
-      if (savedSubtype) setSelectedSubtype(savedSubtype);
-      if (savedWidth) { const val = Number(savedWidth); if (!isNaN(val)) setWidth(val); }
-      if (savedHeight) { const val = Number(savedHeight); if (!isNaN(val)) setHeight(val); }
-      if (savedWindowWidth) { const val = Number(savedWindowWidth); if (!isNaN(val)) setWindowWidth(val); }
-      if (savedWindowHeight) { const val = Number(savedWindowHeight); if (!isNaN(val)) setWindowHeight(val); }
-      if (savedShowWindow) setShowWindow(savedShowWindow === 'true');
-      if (savedFabricTypeId) setSelectedFabricTypeId(savedFabricTypeId);
-      if (savedStep) { const val = Number(savedStep); if (!isNaN(val)) setStep(val); }
+      setTimeout(() => {
+        if (savedUsage) setSelectedUsage(savedUsage);
+        if (savedCatId && categories.length > 0) {
+          const cat = categories.find(c => c.id === savedCatId);
+          if (cat) setSelectedCat(cat);
+        }
+        if (savedProductId && products.length > 0) {
+          const prod = products.find(p => p.id === savedProductId);
+          if (prod) setSelectedProduct(prod);
+        }
+        if (savedSubtype) setSelectedSubtype(savedSubtype);
+        if (savedWidth) { const val = Number(savedWidth); if (!isNaN(val)) setWidth(val); }
+        if (savedHeight) { const val = Number(savedHeight); if (!isNaN(val)) setHeight(val); }
+        if (savedWindowWidth) { const val = Number(savedWindowWidth); if (!isNaN(val)) setWindowWidth(val); }
+        if (savedWindowHeight) { const val = Number(savedWindowHeight); if (!isNaN(val)) setWindowHeight(val); }
+        if (savedShowWindow) setShowWindow(savedShowWindow === 'true');
+        if (savedFabricTypeId) setSelectedFabricTypeId(savedFabricTypeId);
+        if (savedStep) { const val = Number(savedStep); if (!isNaN(val)) setStep(val); }
+        setIsLoaded(true);
+      }, 0);
     } catch (e) {
       console.warn('Failed to load from localStorage', e);
+      setIsLoaded(true);
     }
     hasRestored.current = true;
-    setIsLoaded(true);
   }, [categories, products, searchParams]);
 
   // Save to localStorage when state changes
@@ -217,16 +219,18 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
         const matchedCat = categories.find(c => c.id === matchedProd.categoryId);
         if (matchedCat) {
           hasInitializedProduct.current = true;
-          setSelectedUsage("ev"); // default usage to ev
-          setSelectedCat(matchedCat);
-          setSelectedProduct(matchedProd);
-          
-          // Set initial measurements to fit the category limits
-          const limits = CATEGORY_LIMITS["ev"];
-          setWidth(Math.round((limits.min_width + limits.max_width) / 2));
-          setHeight(Math.round((limits.min_height + limits.max_height) / 2));
-          
-          setStep(3); // skip to sub-type selection
+          setTimeout(() => {
+            setSelectedUsage("ev"); // default usage to ev
+            setSelectedCat(matchedCat);
+            setSelectedProduct(matchedProd);
+            
+            // Set initial measurements to fit the category limits
+            const limits = CATEGORY_LIMITS["ev"];
+            setWidth(Math.round((limits.min_width + limits.max_width) / 2));
+            setHeight(Math.round((limits.min_height + limits.max_height) / 2));
+            
+            setStep(3); // skip to sub-type selection
+          }, 0);
         }
       }
     }
@@ -266,12 +270,16 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
   }, [selectedProduct, mountingTypes]);
 
   // Reset fabric type filter when selected category changes
-  useEffect(() => {
+  const [prevSelectedCat, setPrevSelectedCat] = useState(selectedCat);
+  if (selectedCat !== prevSelectedCat) {
+    setPrevSelectedCat(selectedCat);
     setSelectedFabricTypeId('all');
-  }, [selectedCat]);
+  }
 
   // Ensure measurements are within category limits when usage area changes
-  useEffect(() => {
+  const [prevSelectedUsage, setPrevSelectedUsage] = useState(selectedUsage);
+  if (selectedUsage !== prevSelectedUsage) {
+    setPrevSelectedUsage(selectedUsage);
     if (selectedUsage) {
       const currentLimits = CATEGORY_LIMITS[selectedUsage];
       if (width < currentLimits.min_width) setWidth(currentLimits.min_width);
@@ -279,7 +287,7 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
       if (height < currentLimits.min_height) setHeight(currentLimits.min_height);
       if (height > currentLimits.max_height) setHeight(currentLimits.max_height);
     }
-  }, [selectedUsage]);
+  }
 
   // Handle pointer events for 2D dragging
   useEffect(() => {
@@ -351,10 +359,6 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
     return step === currentStep ? 'var(--color-accent)' : (step > currentStep ? '#A3B3C2' : '#5C6C7C');
   };
 
-  const setDefaultMeasurements = () => {
-    setWindowWidth(Math.round(limits.min_width * 1.5));
-    setWindowHeight(Math.round(limits.min_height * 1.5));
-  };
 
   const resetWizard = () => {
     setSelectedUsage(null);

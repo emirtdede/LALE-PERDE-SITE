@@ -23,7 +23,7 @@ export default function GlobalError({
           fontFamily: 'system-ui, -apple-system, sans-serif'
         }}>
           <h1 style={{ color: '#bd954b', marginBottom: '1rem' }}>Üzgünüz, Sistemsel Bir Hata Oluştu</h1>
-          <p style={{ opacity: 0.8, marginBottom: '2rem' }}>Uygulama çalışırken beklenmeyen bir durumla karşılaşıldı. {error.message}</p>
+          <p style={{ opacity: 0.8, marginBottom: '2rem' }}>Uygulama çalışırken beklenmeyen bir durumla karşılaşıldı. Lütfen sayfayı yenilemeyi deneyin.</p>
           <button 
             onClick={() => reset()}
             style={{

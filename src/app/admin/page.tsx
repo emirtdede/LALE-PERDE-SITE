@@ -225,21 +225,15 @@ function AdminPageContent() {
   };
 
   const triggerResetOTP = async () => {
-    if (!settings) return;
+    setResetStatus('E-posta gönderiliyor...');
     
-    if (resetEmailOrPhone === settings.adminEmail || resetEmailOrPhone === settings.adminPhone) {
-      setResetStatus('E-posta gönderiliyor...');
-      
-      const result = await sendResetOTP(settings.adminEmail);
-      if (result.error) {
-        setResetStatus(result.error);
-        return;
-      }
-
-      setResetStatus(`Doğrulama kodu e-posta adresinize (${settings.adminEmail}) başarıyla gönderildi.`);
-    } else {
-      setResetStatus('Sistemde kayıtlı böyle bir iletişim bilgisi bulunamadı.');
+    const result = await sendResetOTP(resetEmailOrPhone);
+    if (result.error) {
+      setResetStatus(result.error);
+      return;
     }
+
+    setResetStatus('Doğrulama kodu e-posta adresinize başarıyla gönderildi.');
   };
 
   const verifyResetOTPAction = async () => {
@@ -454,8 +448,8 @@ function AdminPageContent() {
         twoFactorChoiceFlow={twoFactorChoiceFlow}
         setTwoFactorChoiceFlow={setTwoFactorChoiceFlow}
         sendOTPForLogin={sendOTPForLogin}
-        adminEmail={serverAdminEmail || settings?.adminEmail || ''}
-        adminPhone={serverAdminPhone || settings?.adminPhone || ''}
+        adminEmail={serverAdminEmail || ''}
+        adminPhone={serverAdminPhone || ''}
       />
     );
   }

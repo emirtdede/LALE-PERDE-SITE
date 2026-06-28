@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '../../context/LanguageContext';
@@ -40,13 +40,38 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
   const [isCurtainAccordionOpen, setIsCurtainAccordionOpen] = useState(true);
   const [isFabricAccordionOpen, setIsFabricAccordionOpen] = useState(true);
 
-  useEffect(() => {
-    setSelectedCategory(searchParams.get('category') || 'all');
-    setSelectedCurtain(searchParams.get('curtain') || 'all');
-    setSelectedFabric(searchParams.get('fabric') || 'all');
-    setSelectedColor(searchParams.get('color') || 'all');
-    setSearchQuery(searchParams.get('search') || '');
-  }, [searchParams]);
+  const currentCategoryParam = searchParams.get('category') || 'all';
+  const currentCurtainParam = searchParams.get('curtain') || 'all';
+  const currentFabricParam = searchParams.get('fabric') || 'all';
+  const currentColorParam = searchParams.get('color') || 'all';
+  const currentSearchParam = searchParams.get('search') || '';
+
+  const [prevCategoryParam, setPrevCategoryParam] = useState(currentCategoryParam);
+  const [prevCurtainParam, setPrevCurtainParam] = useState(currentCurtainParam);
+  const [prevFabricParam, setPrevFabricParam] = useState(currentFabricParam);
+  const [prevColorParam, setPrevColorParam] = useState(currentColorParam);
+  const [prevSearchParam, setPrevSearchParam] = useState(currentSearchParam);
+
+  if (currentCategoryParam !== prevCategoryParam) {
+    setPrevCategoryParam(currentCategoryParam);
+    setSelectedCategory(currentCategoryParam);
+  }
+  if (currentCurtainParam !== prevCurtainParam) {
+    setPrevCurtainParam(currentCurtainParam);
+    setSelectedCurtain(currentCurtainParam);
+  }
+  if (currentFabricParam !== prevFabricParam) {
+    setPrevFabricParam(currentFabricParam);
+    setSelectedFabric(currentFabricParam);
+  }
+  if (currentColorParam !== prevColorParam) {
+    setPrevColorParam(currentColorParam);
+    setSelectedColor(currentColorParam);
+  }
+  if (currentSearchParam !== prevSearchParam) {
+    setPrevSearchParam(currentSearchParam);
+    setSearchQuery(currentSearchParam);
+  }
 
   const updateUrl = (keyOrUpdates: string | Record<string, string>, value?: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));

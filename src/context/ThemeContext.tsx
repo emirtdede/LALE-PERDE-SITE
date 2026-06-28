@@ -12,13 +12,14 @@ interface ThemeContextProps {
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('lale_perde_theme') as Theme;
-      if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+  const [theme, setTheme] = useState<Theme>('light');
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('lale_perde_theme') as Theme;
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      setTheme(savedTheme);
     }
-    return 'light';
-  });
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

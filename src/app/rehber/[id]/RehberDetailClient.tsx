@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '../../../context/LanguageContext';
-import { useDb } from '../../../context/DbContext';
 import { GuideItem } from '../../../context/dbTypes';
 
 import DOMPurify from 'isomorphic-dompurify';

@@ -83,9 +83,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
     };
   }, [isZoomOpen]);
 
-  // Measuring inputs
-  const [width, setWidth] = useState<string>('');
-  const [height, setHeight] = useState<string>('');
+  // Measuring inputs (removed unused states)
 
   const { settings: dbSettings } = useDb();
 
@@ -102,8 +100,8 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
     const latestSettings = dbSettings || settings;
     if (!latestSettings) return;
 
-    const w = width.trim();
-    const h = height.trim();
+    const w = '';
+    const h = '';
     const categoryName = language === 'tr' ? product.categoryTr : product.categoryEn;
     const productName = language === 'tr' ? product.nameTr : product.nameEn;
 

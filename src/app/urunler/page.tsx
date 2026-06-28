@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabaseClient';
+import { supabasePublic as supabase } from '../../lib/supabasePublicServer';
 import { mapProductFromDb, mapCategoryFromDb, mapCurtainTypeFromDb, mapFabricTypeFromDb } from '../../context/dbMappers';
 import { Product, Category, CurtainType, FabricType } from '../../context/dbTypes';
 import ProductsCatalogClient from './ProductsCatalogClient';

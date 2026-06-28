@@ -6,7 +6,10 @@ export async function GET(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
   const rawIp = ip.split(',')[0].trim();
 
-  const salt = process.env.IP_HASH_SALT || 'lale-perde-default-static-salt-2024';
+  const salt = process.env.IP_HASH_SALT;
+  if (!salt) {
+    return NextResponse.json({ error: 'IP_HASH_SALT is missing' }, { status: 500 });
+  }
   const ipHash = crypto.createHash('sha256').update(rawIp + salt).digest('hex');
 
   // Geolocation

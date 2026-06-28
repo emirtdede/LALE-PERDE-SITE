@@ -11,19 +11,25 @@ function RehberClientContent({ initialGuides }: { initialGuides: any[] }) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('search') || '');
-  const [selectedCategory, setSelectedCategory] = useState(() => {
-    const pCat = searchParams.get('category');
-    if (pCat) return pCat;
-    return language === 'tr' ? 'Hepsi' : 'All';
-  });
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const currentSearchParam = searchParams.get('search') || '';
+  const currentCategoryParam = searchParams.get('category') || (language === 'tr' ? 'Hepsi' : 'All');
 
-  React.useEffect(() => {
-    setSearchQuery(searchParams.get('search') || '');
-    const pCat = searchParams.get('category');
-    setSelectedCategory(pCat || (language === 'tr' ? 'Hepsi' : 'All'));
-  }, [searchParams, language]);
+  const [searchQuery, setSearchQuery] = useState(currentSearchParam);
+  const [selectedCategory, setSelectedCategory] = useState(currentCategoryParam);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  const [prevSearchParam, setPrevSearchParam] = useState(currentSearchParam);
+  const [prevCategoryParam, setPrevCategoryParam] = useState(currentCategoryParam);
+
+  if (currentSearchParam !== prevSearchParam) {
+    setPrevSearchParam(currentSearchParam);
+    setSearchQuery(currentSearchParam);
+  }
+
+  if (currentCategoryParam !== prevCategoryParam) {
+    setPrevCategoryParam(currentCategoryParam);
+    setSelectedCategory(currentCategoryParam);
+  }
 
   const updateUrl = (key: string, value: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -97,9 +103,11 @@ function RehberClientContent({ initialGuides }: { initialGuides: any[] }) {
   }, [language]);
 
   // Keep selected category in sync when language changes
-  React.useEffect(() => {
+  const [prevLanguage, setPrevLanguage] = useState(language);
+  if (language !== prevLanguage) {
+    setPrevLanguage(language);
     setSelectedCategory(language === 'tr' ? 'Hepsi' : 'All');
-  }, [language]);
+  }
 
   const filteredGuides = useMemo(() => {
     let list = [...initialGuides];

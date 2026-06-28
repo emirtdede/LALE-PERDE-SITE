@@ -26,7 +26,10 @@ function isRateLimited(ip: string): boolean {
   rateLimitMap.set(ip, recentTimestamps);
   
   // Periodically cleanup old IPs (basic garbage collection for this map)
-  if (rateLimitMap.size > 1000) {
+  // Throttled to run at most once per minute to prevent Event-Loop DoS
+  const lastGcTime = (rateLimitMap as any)._lastGcTime || 0;
+  if (rateLimitMap.size > 1000 && now - lastGcTime > WINDOW_MS) {
+    (rateLimitMap as any)._lastGcTime = now;
     const cutoff = now - WINDOW_MS;
     for (const [key, times] of rateLimitMap.entries()) {
       const validTimes = times.filter(t => t > cutoff);

@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabaseClient';
+import { supabasePublic as supabase } from '../../lib/supabasePublicServer';
 import { mapProductFromDb, mapCategoryFromDb, mapMountingTypeFromDb, mapFabricTypeFromDb } from '../../context/dbMappers';
 import MeasureWizardClient from './MeasureWizardClient';
 import { Metadata } from 'next';

@@ -153,42 +153,55 @@ export const Header: React.FC = () => {
     }
   }, [searchQuery, pathname]);
 
-  const handleFocus = async () => {
+  const handleFocus = () => {
     setIsFocused(true);
-    if (searchData) return;
-
-    try {
-      const [prodRes, servRes, guideRes] = await Promise.all([
-        supabase.from('products').select('id, name_tr, name_en, cover_image, images').eq('status', 'active'),
-        supabase.from('services').select('id, title_tr, title_en').eq('status', 'active'),
-        supabase.from('guides').select('id, title_tr, title_en, image')
-      ]);
-
-      const products = (prodRes.data || []).map(p => ({
-        id: p.id,
-        nameTr: p.name_tr,
-        nameEn: p.name_en,
-        image: p.cover_image || (p.images && p.images[0]) || '/assets/hero.png'
-      }));
-
-      const services = (servRes.data || []).map(s => ({
-        id: s.id,
-        nameTr: s.title_tr,
-        nameEn: s.title_en
-      }));
-
-      const guides = (guideRes.data || []).map(g => ({
-        id: g.id,
-        titleTr: g.title_tr,
-        titleEn: g.title_en,
-        image: g.image || '/assets/hero.png'
-      }));
-
-      setSearchData({ products, services, guides });
-    } catch (e) {
-      console.warn('Failed to fetch search data', e);
-    }
   };
+
+  useEffect(() => {
+    if (!searchQuery.trim() || pathname?.startsWith('/admin')) {
+      setSearchData(null);
+      return;
+    }
+
+    const query = searchQuery.trim().toLowerCase();
+    const safeQuery = query.replace(/[,%"]/g, ''); // prevent PostgREST syntax breaking
+
+    const debounceFn = setTimeout(async () => {
+      try {
+        const [prodRes, servRes, guideRes] = await Promise.all([
+          supabase.from('products').select('id, name_tr, name_en, cover_image, images').eq('status', 'active').or(`name_tr.ilike.%${safeQuery}%,name_en.ilike.%${safeQuery}%`).limit(6),
+          supabase.from('services').select('id, title_tr, title_en').eq('status', 'active').or(`title_tr.ilike.%${safeQuery}%,title_en.ilike.%${safeQuery}%`).limit(4),
+          supabase.from('guides').select('id, title_tr, title_en, image').or(`title_tr.ilike.%${safeQuery}%,title_en.ilike.%${safeQuery}%`).limit(4)
+        ]);
+
+        const products = (prodRes.data || []).map(p => ({
+          id: p.id,
+          nameTr: p.name_tr,
+          nameEn: p.name_en,
+          image: p.cover_image || (p.images && p.images[0]) || '/assets/hero.png'
+        }));
+
+        const services = (servRes.data || []).map(s => ({
+          id: s.id,
+          nameTr: s.title_tr,
+          nameEn: s.title_en
+        }));
+
+        const guides = (guideRes.data || []).map(g => ({
+          id: g.id,
+          titleTr: g.title_tr,
+          titleEn: g.title_en,
+          image: g.image || '/assets/hero.png'
+        }));
+
+        setSearchData({ products, services, guides });
+      } catch (e) {
+        console.warn('Failed to fetch debounced search data', e);
+      }
+    }, 350);
+
+    return () => clearTimeout(debounceFn);
+  }, [searchQuery, pathname]);
 
   const filteredResults = useMemo(() => {
     if (!searchQuery.trim()) return null;
@@ -198,17 +211,9 @@ export const Header: React.FC = () => {
       p.nameTr.toLowerCase().includes(query) || p.nameEn.toLowerCase().includes(query)
     );
 
-    const matchedProducts = searchData ? searchData.products.filter(p => 
-      p.nameTr.toLowerCase().includes(query) || p.nameEn.toLowerCase().includes(query)
-    ) : [];
-
-    const matchedServices = searchData ? searchData.services.filter(s => 
-      s.nameTr.toLowerCase().includes(query) || s.nameEn.toLowerCase().includes(query)
-    ) : [];
-
-    const matchedGuides = searchData ? searchData.guides.filter(g => 
-      g.titleTr.toLowerCase().includes(query) || g.titleEn.toLowerCase().includes(query)
-    ) : [];
+    const matchedProducts = searchData ? searchData.products : [];
+    const matchedServices = searchData ? searchData.services : [];
+    const matchedGuides = searchData ? searchData.guides : [];
 
     const hasAny = matchedStatic.length > 0 || matchedProducts.length > 0 || matchedServices.length > 0 || matchedGuides.length > 0;
     return hasAny ? { pages: matchedStatic, products: matchedProducts, services: matchedServices, guides: matchedGuides } : null;

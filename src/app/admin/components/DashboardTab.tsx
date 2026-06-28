@@ -26,7 +26,7 @@ interface GA4Stats {
 }
 
 // Tooltip for Recharts
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
   const { t } = useLanguage();
   if (active && payload && payload.length) {
     return (
@@ -113,7 +113,7 @@ export default function DashboardTab() {
       mapsClicks: Number(data.mapsClicks) || 0,
       formSubmits: Number(data.formSubmits) || 0,
       daily: Array.isArray(data.daily) && data.daily.length > 0 ? data.daily.map((d: any) => ({
-        date: d.date,
+        date: String(d.date),
         activeUsers: Number(d.activeUsers) || 0,
         screenPageViews: Number(d.screenPageViews) || 0,
         sessions: Number(d.sessions) || 0,
@@ -140,9 +140,10 @@ export default function DashboardTab() {
             setFormCompletedCount(body.formCompletedCount || 0);
           }
         }
-      } catch (err: any) {
-        if (err.name !== 'AbortError') {
-          console.warn('Error fetching GA4 cache:', err.message || err);
+      } catch (err: unknown) {
+        const error = err as Error;
+        if (error.name !== 'AbortError') {
+          console.warn('Error fetching GA4 cache:', error.message || error);
         }
       } finally {
         setLoading(false);
@@ -174,9 +175,10 @@ export default function DashboardTab() {
               setHasFullHistoryLoaded(true);
             }
           }
-        } catch (err: any) {
-          if (err.name !== 'AbortError') {
-            console.warn('Error fetching full GA4 history:', err.message || err);
+        } catch (err: unknown) {
+          const error = err as Error;
+          if (error.name !== 'AbortError') {
+            console.warn('Error fetching full GA4 history:', error.message || error);
           }
         } finally {
           setLoadingHistory(false);
@@ -245,9 +247,10 @@ export default function DashboardTab() {
           showToast(body.error || t('admin.dashboard.alerts.syncFailed'), true);
         }
       }
-    } catch (err: any) {
-      if (err.name !== 'AbortError') {
-        console.warn('Error syncing GA4:', err.message || err);
+    } catch (err: unknown) {
+      const error = err as Error;
+      if (error.name !== 'AbortError') {
+        console.warn('Error syncing GA4:', error.message || error);
         showToast(t('admin.dashboard.alerts.connectionError'), true);
       }
     } finally {

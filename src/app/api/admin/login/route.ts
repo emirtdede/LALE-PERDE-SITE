@@ -27,12 +27,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Eksik bilgi' }, { status: 400 });
     }
 
-    // Server-side check
-    const { data: authRecord, error } = await supabaseAdmin
+    // Server-side check - use two separate queries to avoid .or() string interpolation injection
+    let authRecord = null;
+    const { data: byUsername } = await supabaseAdmin
       .from('admin_auth')
       .select('admin_username, admin_email, admin_phone, admin_password_hash, two_factor_enabled, two_factor_type')
-      .or(`admin_username.eq.${username},admin_email.eq.${username}`)
+      .eq('admin_username', username)
       .maybeSingle();
+    
+    if (byUsername) {
+      authRecord = byUsername;
+    } else {
+      const { data: byEmail } = await supabaseAdmin
+        .from('admin_auth')
+        .select('admin_username, admin_email, admin_phone, admin_password_hash, two_factor_enabled, two_factor_type')
+        .eq('admin_email', username)
+        .maybeSingle();
+      authRecord = byEmail;
+    }
+
+    const error = !authRecord;
 
     if (error || !authRecord) {
       return NextResponse.json({ error: 'Güvenlik ayarları okunamadı veya geçersiz kullanıcı' }, { status: 500 });

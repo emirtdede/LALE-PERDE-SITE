@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useAdminDb } from '@/context/AdminDbContext';
 import { supabase } from '@/lib/supabaseClient';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -49,7 +50,8 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export default function DashboardTab() {
-  const { inbox, visitorLogs, campaigns } = useAdminDb();
+  const { inbox, visitorLogs } = useAdminDb();
+  const { campaigns = [] } = useAdminDb();
   const { t, language } = useLanguage();
   const [productCount, setProductCount] = useState(0);
 
@@ -187,7 +189,7 @@ export default function DashboardTab() {
     }
   }, [timeRange, hasFullHistoryLoaded, loadingHistory]);
 
-  const handleManualSync = async () => {
+  const handleManualSync = useCallback(async () => {
     if (syncing) return;
 
     // Cooldown check (60 seconds)
@@ -253,7 +255,7 @@ export default function DashboardTab() {
         setSyncing(false);
       }
     }
-  };
+  }, [syncing, language, t]);
 
   const showToast = (text: string, isError: boolean) => {
     setToastMessage({ text, isError });

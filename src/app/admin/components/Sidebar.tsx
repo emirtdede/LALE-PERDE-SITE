@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useState } from 'react';
 import { AdminTab } from '../page';
 import { useLanguage } from '@/context/LanguageContext';

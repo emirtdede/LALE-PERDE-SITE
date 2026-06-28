@@ -10,7 +10,8 @@ import {
   VisitorLog,
   CurtainType,
   FabricType,
-  MountingType
+  MountingType,
+  CommentItem
 } from './dbTypes';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -301,6 +302,7 @@ export const mapGuideFromDb = (g: DbRecord): GuideItem => ({
   date: g.date,
   status: g.status,
   displayOrder: g.display_order,
+  category: g.category || 'Genel',
 });
 
 export const mapGuideToDb = (g: GuideItem) => ({
@@ -315,6 +317,7 @@ export const mapGuideToDb = (g: GuideItem) => ({
   date: g.date,
   status: g.status,
   display_order: g.displayOrder,
+  category: g.category || 'Genel',
 });
 
 export const mapCampaignFromDb = (c: DbRecord): Campaign => ({
@@ -394,7 +397,7 @@ export const mapVisitorLogToDb = (v: VisitorLog) => ({
   is_bot: v.isBot,
 });
 
-export const mapCommentFromDb = (c: DbRecord): any => ({
+export const mapCommentFromDb = (c: DbRecord) => ({
   id: c.id,
   author: c.author,
   contentTr: c.content_tr,
@@ -405,7 +408,7 @@ export const mapCommentFromDb = (c: DbRecord): any => ({
   createdAt: c.created_at,
 });
 
-export const mapCommentToDb = (c: any) => ({
+export const mapCommentToDb = (c: Partial<CommentItem>) => ({
   id: c.id,
   author: c.author,
   content_tr: c.contentTr,

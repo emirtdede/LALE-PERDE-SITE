@@ -342,7 +342,8 @@ export default function GuidesTab() {
       image: '',
       date: new Date().toISOString().split('T')[0],
       status: 'active',
-      displayOrder: guides.length + 1
+      displayOrder: guides.length + 1,
+      category: 'Genel'
     });
   };
 
@@ -527,10 +528,25 @@ export default function GuidesTab() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '1.5rem' }}>
               <div>
                 <label style={labelStyle}>{t('admin.guides.publishDate')}</label>
                 <input type="date" name="date" value={editForm.date || ''} onChange={handleChange} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Kategori</label>
+                <select name="category" value={editForm.category || 'Genel'} onChange={handleChange} style={inputStyle}>
+                  <option value="Genel">Genel</option>
+                  <option value="Ev Perdeleri">Ev Perdeleri</option>
+                  <option value="Ofis / Kurumsal">Ofis / Kurumsal</option>
+                  <option value="Cami / İbadethane">Cami / İbadethane</option>
+                  <option value="Sahne / Konferans">Sahne / Konferans</option>
+                  <option value="Hastane / Klinik">Hastane / Klinik</option>
+                  <option value="Otel / Konaklama">Otel / Konaklama</option>
+                  <option value="Dış Mekan / Teras">Dış Mekan / Teras</option>
+                  <option value="Endüstriyel (PVC)">Endüstriyel (PVC)</option>
+                  <option value="Karavan / Tekne">Karavan / Tekne</option>
+                </select>
               </div>
               <div>
                 <label style={labelStyle}>{t('admin.guides.displayOrder')}</label>

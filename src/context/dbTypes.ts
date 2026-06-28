@@ -178,6 +178,7 @@ export interface GuideItem {
   date: string;
   status: 'active' | 'passive';
   displayOrder: number;
+  category?: string;
 }
 
 export interface InboxMessage {

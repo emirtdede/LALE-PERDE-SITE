@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -16,6 +17,7 @@ export default function CommentsTab() {
   const [portalTarget, setPortalTarget] = useState<Element | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPortalTarget(document.getElementById('admin-tab-actions'));
     fetchCommentsLazy?.();
   }, [fetchCommentsLazy]);

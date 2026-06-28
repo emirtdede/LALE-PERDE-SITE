@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { cookies } from 'next/headers';
@@ -62,7 +63,7 @@ export async function loginAttempt(username: string, password: string) {
 }
 
 // 2. Giriş için OTP Gönderimi ve Şifreli Çerez (Cookie) Ataması
-export async function sendLoginOTP(destinationType: 'email' | 'phone', targetEmail: string, _targetPhone: string) {
+export async function sendLoginOTP(targetEmail: string) {
   try {
     const otp = generateOTP();
     
@@ -76,14 +77,7 @@ export async function sendLoginOTP(destinationType: 'email' | 'phone', targetEma
       httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 300, path: '/'
     });
 
-    if (destinationType === 'email') {
-      await sendOTPEmail(targetEmail, otp, '2fa');
-    } else {
-      // TODO: İleride gerçek SMS sağlayıcısı (örn: Netgsm/Twilio) entegre edilecek.
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('\n[SERVER LOG] SMS 2FA KODU (SIMÜLASYON) - Gönderildi (***)\n');
-      }
-    }
+    await sendOTPEmail(targetEmail, otp, '2fa');
 
     return { success: true };
   } catch (error: any) {
@@ -115,13 +109,14 @@ export async function verifyLoginOTPAndLogin(username: string, enteredOTP: strin
     });
 
     return { success: true };
-  } catch (_err) {
+  } catch (err) {
+    console.error('[AUTH_ERROR]', err);
     return { error: 'Geçersiz veya süresi dolmuş kod.' };
   }
 }
 
 // 4. Panel İçi Güvenlik Ayarları (SecurityTab) OTP'si
-export async function sendSecurityOTP(destinationType: 'email' | 'phone', targetEmail: string) {
+export async function sendSecurityOTP(targetEmail: string) {
   try {
     const cookieStore = await cookies();
     const adminSession = cookieStore.get('admin_session');
@@ -138,14 +133,7 @@ export async function sendSecurityOTP(destinationType: 'email' | 'phone', target
       httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', maxAge: 300, path: '/'
     });
 
-    if (destinationType === 'email') {
-      await sendOTPEmail(targetEmail, otp, 'change');
-    } else {
-      // TODO: İleride gerçek SMS sağlayıcısı (örn: Netgsm/Twilio) entegre edilecek.
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('\n[SERVER LOG] SECURITY SMS KODU (SIMÜLASYON) - Gönderildi (***)\n');
-      }
-    }
+    await sendOTPEmail(targetEmail, otp, 'change');
 
     return { success: true };
   } catch (error: any) {
@@ -239,7 +227,8 @@ export async function completePasswordReset(newPassword: string) {
 
     cookieStore.delete('reset_otp');
     return { success: true };
-  } catch (err) {
+  } catch (err: unknown) {
+    console.error('[AUTH_ERROR]', err);
     return { error: 'Yetkisiz veya süresi dolmuş işlem.' };
   }
 }

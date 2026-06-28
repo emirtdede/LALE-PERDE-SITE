@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useAdminDb } from '@/context/AdminDbContext';
@@ -358,6 +359,7 @@ export default function CategoriesTab() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPortalTarget(document.getElementById('admin-tab-actions'));
   }, []);
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { jwtVerify } from 'jose';
@@ -25,7 +26,7 @@ export async function verifyAdminSession() {
   try {
     const { payload } = await jwtVerify(token, getSecretKey());
     return payload;
-  } catch (err) {
+  } catch {
     throw new Error('Yetkisiz işlem: Geçersiz veya süresi dolmuş oturum.');
   }
 }

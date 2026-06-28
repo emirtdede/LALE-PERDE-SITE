@@ -356,6 +356,34 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
     setWindowHeight(Math.round(limits.min_height * 1.5));
   };
 
+  const resetWizard = () => {
+    setSelectedUsage(null);
+    setSelectedCat(null);
+    setSelectedProduct(null);
+    setSelectedSubtype(null);
+    setWidth(300);
+    setHeight(200);
+    setWindowWidth(240);
+    setWindowHeight(180);
+    setStep(1);
+    
+    try {
+      localStorage.removeItem('measure_wizard_step');
+      localStorage.removeItem('measure_wizard_usage');
+      localStorage.removeItem('measure_wizard_cat_id');
+      localStorage.removeItem('measure_wizard_product_id');
+      localStorage.removeItem('measure_wizard_subtype');
+      localStorage.removeItem('measure_wizard_width');
+      localStorage.removeItem('measure_wizard_height');
+      localStorage.removeItem('measure_wizard_window_width');
+      localStorage.removeItem('measure_wizard_window_height');
+      localStorage.removeItem('measure_wizard_show_window');
+      localStorage.removeItem('measure_wizard_fabric_type_id');
+    } catch (e) {
+      console.warn('Failed to clear localStorage', e);
+    }
+  };
+
   if (!isLoaded) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -422,6 +450,36 @@ function MeasureWizardContent({ initialProducts, initialCategories, initialMount
             <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: getStepColor(4), marginBottom: '0.3rem', fontWeight: 600 }}>{t('wizard.stepLabel')} 04</div>
             <div style={{ fontSize: '1rem', color: step >= 4 ? 'var(--color-text)' : '#5C6C7C', fontWeight: 500, textTransform: 'uppercase' }}>4. {t('wizard.step4Name')}</div>
           </div>
+
+          {(selectedUsage || selectedProduct || selectedSubtype) && (
+            <button
+              onClick={resetWizard}
+              style={{
+                marginTop: '1.5rem',
+                background: 'none',
+                border: '1px dashed var(--color-accent)',
+                color: 'var(--color-accent)',
+                padding: '0.6rem 1rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                transition: 'all 0.2s',
+                width: 'fit-content'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--color-accent)';
+                e.currentTarget.style.color = '#FFFFFF';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--color-accent)';
+              }}
+            >
+              {language === 'tr' ? 'Tercihleri Sıfırla' : 'Reset Preferences'}
+            </button>
+          )}
         </div>
       </aside>
 

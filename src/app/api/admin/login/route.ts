@@ -43,12 +43,15 @@ export async function POST(request: Request) {
 
     if (isValidUser && isValidPass) {
       if (preCheck) {
+        const maskedPhone = authRecord.admin_phone ? authRecord.admin_phone.replace(/(\d{3})\d{4}(\d{2})/, "$1 **** $2") : '';
+        const maskedEmail = authRecord.admin_email ? authRecord.admin_email.replace(/(.{2})(.*)(?=@)/, (gp1: string, gp2: string, gp3: string) => gp1 + "*".repeat(gp3.length)) : '';
+
         return NextResponse.json({ 
           success: true, 
           twoFactorEnabled: authRecord.two_factor_enabled, 
           twoFactorType: authRecord.two_factor_type,
-          adminEmail: authRecord.admin_email,
-          adminPhone: authRecord.admin_phone
+          adminEmail: maskedEmail,
+          adminPhone: maskedPhone
         });
       }
 

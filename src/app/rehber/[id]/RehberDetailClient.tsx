@@ -8,23 +8,35 @@ import { useLanguage } from '../../../context/LanguageContext';
 import { useDb } from '../../../context/DbContext';
 import { GuideItem } from '../../../context/dbTypes';
 
+import DOMPurify from 'isomorphic-dompurify';
+
 export default function RehberDetailClient({ initialPost }: { initialPost: GuideItem | null }) {
   const { language } = useLanguage();
+  const router = useRouter();
   const [post, setPost] = useState<GuideItem | null>(initialPost);
 
-  useEffect(() => {
+  const [prevInitialPost, setPrevInitialPost] = useState(initialPost);
+  if (initialPost !== prevInitialPost) {
+    setPrevInitialPost(initialPost);
     if (initialPost) {
       setPost(initialPost);
     }
-  }, [initialPost]);
+  }
 
   if (!post) {
     return (
       <div style={{ textAlign: 'center', padding: '6rem' }}>
         <h2>Yazı bulunamadı / Article not found.</h2>
-        <Link href="/rehber" style={{ color: 'var(--color-accent)', textDecoration: 'underline', marginTop: '2rem', display: 'inline-block' }}>
+        <a 
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            router.back();
+          }}
+          style={{ color: 'var(--color-accent)', textDecoration: 'underline', marginTop: '2rem', display: 'inline-block', cursor: 'pointer' }}
+        >
           Rehbere Dön
-        </Link>
+        </a>
       </div>
     );
   }
@@ -35,8 +47,12 @@ export default function RehberDetailClient({ initialPost }: { initialPost: Guide
 
   return (
     <div className="rehber-detail-container" style={{ maxWidth: '800px', margin: '0 auto', padding: '20px 2rem 5rem' }}>
-      <Link 
-        href="/rehber" 
+      <a 
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          router.back();
+        }}
         style={{ 
           display: 'inline-flex', 
           alignItems: 'center', 
@@ -46,17 +62,15 @@ export default function RehberDetailClient({ initialPost }: { initialPost: Guide
           textTransform: 'uppercase', 
           fontSize: '0.8rem', 
           letterSpacing: '0.05em',
-          fontWeight: 600
+          fontWeight: 600,
+          cursor: 'pointer'
         }}
       >
         ← {language === 'tr' ? 'Rehbere Dön' : 'Back to Guides'}
-      </Link>
+      </a>
 
       <article>
         <header style={{ marginBottom: '3rem' }}>
-          <span style={{ fontSize: '0.85rem', opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            {new Date(post.date).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')} • 3 min read
-          </span>
           <h1 
             className="rehber-detail-title"
             style={{ 
@@ -81,7 +95,7 @@ export default function RehberDetailClient({ initialPost }: { initialPost: Guide
 
         <div 
           className="guide-rich-content" 
-          dangerouslySetInnerHTML={{ __html: content }} 
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }} 
           style={{
             fontSize: '1.1rem',
             lineHeight: 1.8,

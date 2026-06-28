@@ -20,7 +20,9 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
 
   const [product] = useState<Product>(initialProduct);
   const [settings, setSettings] = useState<SystemSettings | null>(null);
-  const [activeImage, setActiveImage] = useState<string>('');
+  const [activeImage, setActiveImage] = useState<string>(
+    product?.images?.[0] || product?.coverImage || ''
+  );
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Image zoom lightbox states
@@ -84,40 +86,16 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
   // Measuring inputs
   const [width, setWidth] = useState<string>('');
   const [height, setHeight] = useState<string>('');
-  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
 
   const { settings: dbSettings } = useDb();
 
-  useEffect(() => {
-    if (product) {
-      if (product.images && product.images.length > 0) {
-        setActiveImage(product.images[0]);
-      } else if (product.coverImage) {
-        setActiveImage(product.coverImage);
-      }
-    }
-  }, [product]);
+  const [prevDbSettings, setPrevDbSettings] = useState(dbSettings);
+  if (dbSettings !== prevDbSettings) {
+    setPrevDbSettings(dbSettings);
+    setSettings(dbSettings || null);
+  }
 
-  useEffect(() => {
-    if (dbSettings) {
-      setSettings(dbSettings);
-    }
-  }, [dbSettings]);
 
-  // Handle live calculation
-  useEffect(() => {
-    if (!product || !width || !height) {
-      setEstimatedPrice(null);
-      return;
-    }
-    const w = parseFloat(width);
-    const h = parseFloat(height);
-    if (!isNaN(w) && !isNaN(h)) {
-      // Calculate a rough estimated price
-      const price = w * h * product.priceMultiplier;
-      setEstimatedPrice(Math.round(price));
-    }
-  }, [width, height, product]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleWhatsAppQuote = () => {

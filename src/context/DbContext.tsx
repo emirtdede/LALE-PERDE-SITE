@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import {
   SystemSettings,
@@ -9,11 +9,9 @@ import {
   CommentItem
 } from './dbTypes';
 import {
-  mapSettingsFromDb,
   mapCampaignFromDb,
   mapCommentFromDb,
-  mapVisitorLogToDb,
-  mapVisitorLogFromDb
+  mapVisitorLogToDb
 } from './dbMappers';
 
 export interface InitialDbData {
@@ -39,10 +37,10 @@ export interface GlobalDbContextType {
 export const DbContext = createContext<GlobalDbContextType | undefined>(undefined);
 
 export const DbProvider: React.FC<{ children: React.ReactNode; initialData?: InitialDbData | null }> = ({ children, initialData }) => {
-  const [settings, setSettings] = useState<SystemSettings | null>(initialData?.settings || null);
+  const [settings] = useState<SystemSettings | null>(initialData?.settings || null);
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialData?.campaigns || []);
   const [comments, setComments] = useState<CommentItem[]>(initialData?.comments || []);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   
   const [campaignsFetched, setCampaignsFetched] = useState(false);
   const [commentsFetched, setCommentsFetched] = useState(false);

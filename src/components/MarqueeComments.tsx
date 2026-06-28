@@ -170,7 +170,7 @@ export default function MarqueeComments({ comments }: MarqueeCommentsProps) {
                     fontWeight: 300
                   }}
                 >
-                  "{language === 'tr' ? item.contentTr : item.contentEn}"
+                  &quot;{language === 'tr' ? item.contentTr : item.contentEn}&quot;
                 </p>
               </div>
               <h4 style={{ color: '#BD954B', fontFamily: 'var(--font-serif)', fontSize: '1rem', fontWeight: 500 }}>
@@ -213,7 +213,7 @@ export default function MarqueeComments({ comments }: MarqueeCommentsProps) {
                     fontWeight: 300
                   }}
                 >
-                  "{language === 'tr' ? item.contentTr : item.contentEn}"
+                  &quot;{language === 'tr' ? item.contentTr : item.contentEn}&quot;
                 </p>
               </div>
               <h4 style={{ color: '#BD954B', fontFamily: 'var(--font-serif)', fontSize: '1rem', fontWeight: 500 }}>

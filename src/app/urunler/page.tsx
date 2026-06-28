@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabaseClient';
 import { mapProductFromDb, mapCategoryFromDb, mapCurtainTypeFromDb, mapFabricTypeFromDb } from '../../context/dbMappers';
+import { Product, Category, CurtainType, FabricType } from '../../context/dbTypes';
 import ProductsCatalogClient from './ProductsCatalogClient';
 import { Metadata } from 'next';
 
@@ -11,10 +12,10 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsCatalogPage() {
-  let products: any[] = [];
-  let categories: any[] = [];
-  let curtainTypes: any[] = [];
-  let fabricTypes: any[] = [];
+  let products: Product[] = [];
+  let categories: Category[] = [];
+  let curtainTypes: CurtainType[] = [];
+  let fabricTypes: FabricType[] = [];
 
   try {
     const [

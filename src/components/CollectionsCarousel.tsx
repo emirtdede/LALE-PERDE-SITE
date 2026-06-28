@@ -14,13 +14,14 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
   const router = useRouter();
   const { language } = useLanguage();
   
-  const [rotation, setRotation] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   
+  const rotationRef = useRef(0);
+  const wheelRef = useRef<HTMLDivElement>(null);
+  
   // State for zero-error render & load-complete logic
   const [imagesLoaded, setImagesLoaded] = useState<Record<string, boolean>>({});
-  const [isClientLoaded, setIsClientLoaded] = useState(false);
   
   const startX = useRef(0);
   const startRotation = useRef(0);
@@ -29,9 +30,7 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
   const lastX = useRef(0);
   const requestRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    setIsClientLoaded(true);
-  }, []);
+
 
   const handleImageLoad = (id: string) => {
     setImagesLoaded((prev) => ({ ...prev, [id]: true }));
@@ -50,14 +49,25 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
   const count = activeCategories.length;
   const angleStep = 360 / (count || 1);
 
+  const applyRotation = (newRot: number) => {
+    rotationRef.current = newRot;
+    if (wheelRef.current) {
+      wheelRef.current.style.transform = `rotateY(${newRot}deg)`;
+    }
+    
+    if (count > 0) {
+      let normalizedRotation = -newRot % 360;
+      if (normalizedRotation < 0) normalizedRotation += 360;
+      const index = Math.round(normalizedRotation / angleStep) % count;
+      setActiveIndex(prev => prev !== index ? index : prev);
+    }
+  };
+
   useEffect(() => {
     const updatePhysics = () => {
       if (!isDragging && Math.abs(velocity.current) > 0.05) {
-        setRotation((prev) => {
-          const nextRot = prev + velocity.current;
-          velocity.current *= 0.95;
-          return nextRot;
-        });
+        applyRotation(rotationRef.current + velocity.current);
+        velocity.current *= 0.95;
       }
       requestRef.current = requestAnimationFrame(updatePhysics);
     };
@@ -66,21 +76,12 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [isDragging]);
-
-  useEffect(() => {
-    if (count === 0) return;
-    let normalizedRotation = -rotation % 360;
-    if (normalizedRotation < 0) normalizedRotation += 360;
-    
-    const index = Math.round(normalizedRotation / angleStep) % count;
-    setActiveIndex(index);
-  }, [rotation, angleStep, count]);
+  }, [isDragging, count, angleStep]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     startX.current = e.clientX;
-    startRotation.current = rotation;
+    startRotation.current = rotationRef.current;
     velocity.current = 0;
     lastX.current = e.clientX;
     lastTime.current = performance.now();
@@ -92,7 +93,7 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
     
     const sensitivity = 0.25;
     const newRot = startRotation.current + dx * sensitivity;
-    setRotation(newRot);
+    applyRotation(newRot);
 
     const now = performance.now();
     const dt = now - lastTime.current;
@@ -111,50 +112,44 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
-    const touch = e.touches[0];
-    startX.current = touch.clientX;
-    startRotation.current = rotation;
+    startX.current = e.touches[0].clientX;
+    startRotation.current = rotationRef.current;
     velocity.current = 0;
-    lastX.current = touch.clientX;
+    lastX.current = e.touches[0].clientX;
     lastTime.current = performance.now();
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
-    const touch = e.touches[0];
-    const dx = touch.clientX - startX.current;
-    const sensitivity = 0.35;
+    const dx = e.touches[0].clientX - startX.current;
+    
+    const sensitivity = 0.4;
     const newRot = startRotation.current + dx * sensitivity;
-    setRotation(newRot);
+    applyRotation(newRot);
 
     const now = performance.now();
     const dt = now - lastTime.current;
     if (dt > 4) {
-      const rawVelocity = ((touch.clientX - lastX.current) * sensitivity) / (dt / 16.666);
+      const rawVelocity = ((e.touches[0].clientX - lastX.current) * sensitivity) / (dt / 16.666);
       velocity.current = Math.max(-20, Math.min(20, rawVelocity));
     }
     
-    lastX.current = touch.clientX;
+    lastX.current = e.touches[0].clientX;
     lastTime.current = now;
   };
 
   const selectCategory = (index: number) => {
     if (isDragging) return;
-    const targetAngle = -index * angleStep;
     
-    let currentRot = rotation % 360;
-    if (currentRot < 0) currentRot += 360;
+    const targetBase = -index * angleStep;
+    let diff = (targetBase - rotationRef.current) % 360;
     
-    let diff = targetAngle - rotation;
-    const remainder = diff % 360;
-    if (Math.abs(remainder) > 180) {
-      diff = remainder > 0 ? remainder - 360 : remainder + 360;
-    } else {
-      diff = remainder;
-    }
-
+    // Normalize diff to be between -180 and 180
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    
     velocity.current = 0;
-    setRotation((prev) => prev + diff);
+    applyRotation(rotationRef.current + diff);
   };
 
   if (count === 0) return null;
@@ -186,13 +181,14 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
       onTouchEnd={handleMouseUpOrLeave}
     >
       <div
+        ref={wheelRef}
         className="kinetic-carousel-wheel"
         style={{
           position: 'relative',
           width: '302px',   // 280px * 1.08
           height: '453px',  // 420px * 1.08
           transformStyle: 'preserve-3d',
-          transform: `rotateY(${rotation}deg)`,
+          transform: 'rotateY(0deg)',
           transition: isDragging ? 'none' : 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)',
         }}
       >
@@ -252,7 +248,7 @@ export default function CollectionsCarousel({ categories }: CollectionsCarouselP
                 }}
               >
                 <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
-                  {!isClientLoaded && (
+                  {!imagesLoaded[cat.id] && (
                     <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(26,46,64,0.5)' }}>
                        <span style={{ color: '#BD954B' }}>Yükleniyor...</span>
                     </div>

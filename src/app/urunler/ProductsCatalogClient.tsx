@@ -29,40 +29,55 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
   }, [initialCategories]);
   
   // Filter states
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedCurtain, setSelectedCurtain] = useState<string>('all');
-  const [selectedFabric, setSelectedFabric] = useState<string>('all');
-  const [selectedColor, setSelectedColor] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => searchParams.get('category') || 'all');
+  const [selectedCurtain, setSelectedCurtain] = useState<string>(() => searchParams.get('curtain') || 'all');
+  const [selectedFabric, setSelectedFabric] = useState<string>(() => searchParams.get('fabric') || 'all');
+  const [selectedColor, setSelectedColor] = useState<string>(() => searchParams.get('color') || 'all');
+  const [searchQuery, setSearchQuery] = useState<string>(() => searchParams.get('search') || '');
   const [sortBy, setSortBy] = useState<string>('order');
   
   // Accordion state
   const [isCurtainAccordionOpen, setIsCurtainAccordionOpen] = useState(true);
   const [isFabricAccordionOpen, setIsFabricAccordionOpen] = useState(true);
 
-  // Sync state with URL search params
   useEffect(() => {
-    const catParam = searchParams.get('category');
-    const curParam = searchParams.get('curtain');
-    const fabParam = searchParams.get('fabric');
-    const searchParam = searchParams.get('search');
-
-    if (catParam) setSelectedCategory(catParam);
-    if (curParam) setSelectedCurtain(curParam);
-    if (fabParam) setSelectedFabric(fabParam);
-    if (searchParam) setSearchQuery(searchParam);
+    setSelectedCategory(searchParams.get('category') || 'all');
+    setSelectedCurtain(searchParams.get('curtain') || 'all');
+    setSelectedFabric(searchParams.get('fabric') || 'all');
+    setSelectedColor(searchParams.get('color') || 'all');
+    setSearchQuery(searchParams.get('search') || '');
   }, [searchParams]);
 
-  const updateUrl = (key: string, value: string) => {
+  const updateUrl = (keyOrUpdates: string | Record<string, string>, value?: string) => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
-    if (value === 'all' || !value) {
-      current.delete(key);
+    if (typeof keyOrUpdates === 'string') {
+      const val = value;
+      if (val === 'all' || !val) {
+        current.delete(keyOrUpdates);
+      } else {
+        current.set(keyOrUpdates, val);
+      }
     } else {
-      current.set(key, value);
+      Object.entries(keyOrUpdates).forEach(([k, v]) => {
+        if (v === 'all' || !v) {
+          current.delete(k);
+        } else {
+          current.set(k, v);
+        }
+      });
     }
     const search = current.toString();
     const query = search ? `?${search}` : '';
     router.push(`/urunler${query}`, { scroll: false });
+  };
+
+  const clearAllFilters = () => {
+    setSelectedCategory('all');
+    setSelectedCurtain('all');
+    setSelectedFabric('all');
+    setSelectedColor('all');
+    setSearchQuery('');
+    router.push('/urunler', { scroll: false });
   };
 
   // Extract unique colors & fabrics for filter options
@@ -157,25 +172,83 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
       <div className="products-catalog-layout" style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '2rem' }}>
         {/* Sidebar Filters */}
         <aside className="products-catalog-sidebar" style={{ backgroundColor: 'var(--color-neutral)', padding: '2rem', borderRadius: '8px', border: '1px solid var(--color-border)', height: 'fit-content' }}>
-          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', marginBottom: '1.5rem', color: 'var(--color-primary)' }}>
-            {t('catalog.filterTitle')}
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', margin: 0, color: 'var(--color-primary)' }}>
+              {t('catalog.filterTitle')}
+            </h3>
+            {(selectedCategory !== 'all' || selectedCurtain !== 'all' || selectedFabric !== 'all' || selectedColor !== 'all' || searchQuery !== '') && (
+              <button 
+                onClick={clearAllFilters}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--color-accent)',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  padding: 0
+                }}
+              >
+                {language === 'tr' ? 'Sıfırla' : 'Clear'}
+              </button>
+            )}
+          </div>
 
           {/* Search filter inside sidebar */}
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', color: 'var(--color-accent)' }}>
               {t('catalog.search')}
             </label>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                updateUrl('search', e.target.value);
-              }}
-              placeholder={t('nav.searchPlaceholder')}
-              style={{ width: '100%', padding: '0.6rem', border: '1px solid var(--color-border)', borderRadius: '4px', background: 'transparent', color: 'var(--color-text)' }}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  updateUrl('search', e.target.value);
+                }}
+                placeholder={t('nav.searchPlaceholder')}
+                style={{ 
+                  width: '100%', 
+                  padding: '0.6rem 2rem 0.6rem 0.6rem', 
+                  border: '1px solid var(--color-border)', 
+                  borderRadius: '4px', 
+                  background: 'transparent', 
+                  color: 'var(--color-text)',
+                  outline: 'none'
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    updateUrl('search', '');
+                  }}
+                  style={{
+                    position: 'absolute',
+                    right: '0.6rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--color-accent)',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    padding: '0.2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0.7,
+                    transition: 'opacity 0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
+                  onMouseOut={(e) => e.currentTarget.style.opacity = '0.7'}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Category Filter */}
@@ -188,11 +261,13 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
               onChange={(e) => {
                 const val = e.target.value;
                 setSelectedCategory(val);
-                setSelectedCurtain('all'); // reset sub filters
+                setSelectedCurtain('all');
                 setSelectedFabric('all');
-                updateUrl('category', val);
-                updateUrl('curtain', 'all');
-                updateUrl('fabric', 'all');
+                updateUrl({
+                  category: val,
+                  curtain: 'all',
+                  fabric: 'all'
+                });
               }}
               style={{ width: '100%', padding: '0.6rem', border: '1px solid var(--color-border)', borderRadius: '4px', background: 'var(--color-card-bg)', color: 'var(--color-text)' }}
             >
@@ -274,7 +349,10 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
               </label>
               {selectedColor !== 'all' && (
                 <button 
-                  onClick={() => setSelectedColor('all')} 
+                  onClick={() => {
+                    setSelectedColor('all');
+                    updateUrl('color', 'all');
+                  }} 
                   style={{ background: 'none', border: 'none', color: 'var(--color-accent)', fontSize: '0.75rem', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
                 >
                   {language === 'tr' ? 'Temizle' : 'Clear'}
@@ -287,7 +365,10 @@ function ProductsCatalogContent({ initialProducts, initialCategories, initialCur
                 return (
                   <button
                     key={name}
-                    onClick={() => setSelectedColor(name)}
+                    onClick={() => {
+                      setSelectedColor(name);
+                      updateUrl('color', name);
+                    }}
                     title={name}
                     style={{
                       width: '32px',

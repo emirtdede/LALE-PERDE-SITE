@@ -19,7 +19,7 @@ export default async function Home() {
   try {
     const [servicesRes, productsRes, catsRes, homeRes] = await Promise.all([
       supabase.from('services').select('*').eq('status', 'active').order('display_order', { ascending: true }),
-      supabase.from('products').select('*').eq('status', 'active').order('display_order', { ascending: true }),
+      supabase.from('products').select('*').eq('status', 'active').order('display_order', { ascending: true }).limit(8),
       supabase.from('categories').select('*').order('display_order', { ascending: true }),
       supabase.from('home_page_content').select('*')
     ]);

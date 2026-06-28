@@ -20,7 +20,8 @@ import {
   VisitorLog,
   CurtainType,
   FabricType,
-  MountingType
+  MountingType,
+  CommentItem
 } from './dbTypes';
 
 interface AdminDbContextType {
@@ -36,7 +37,7 @@ interface AdminDbContextType {
   inbox: InboxMessage[];
   searchLogs: SearchLog[];
   visitorLogs: VisitorLog[];
-  comments: any[];
+  comments: CommentItem[];
   loading: boolean;
   
   // Products
@@ -109,8 +110,8 @@ interface AdminDbContextType {
   fetchCommentsLazy?: () => Promise<void>;
   
   // Comments CRUD
-  addComment: (comment: any) => Promise<boolean>;
-  updateComment: (comment: any) => Promise<boolean>;
+  addComment: (comment: Omit<CommentItem, 'id' | 'createdAt'>) => Promise<boolean>;
+  updateComment: (comment: CommentItem) => Promise<boolean>;
   deleteComment: (id: string) => Promise<boolean>;
 }
 
@@ -198,7 +199,7 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
   const [servicesFetched, setServicesFetched] = useState(false);
   const [guidesFetched, setGuidesFetched] = useState(false);
   const [campaignsFetched, setCampaignsFetched] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<CommentItem[]>([]);
   const [commentsFetched, setCommentsFetched] = useState(false);
 
   const fetchData = async () => {
@@ -233,8 +234,8 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
       setSearchLogs([]);
       setVisitorLogs([]);
 
-    } catch (e: any) {
-      console.warn('Error fetching data from Supabase:', e.message || e);
+    } catch (e: unknown) {
+      console.warn('Error fetching data from Supabase:', (e as Error).message || e);
     } finally {
       setLoading(false);
     }
@@ -312,16 +313,16 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
   };
 
   // PRODUCTS MUTATIONS
-  const addProduct = async (p: Omit<Product, 'createdAt' | 'updatedAt'>) => {
+  const addProduct = useCallback(async (p: Omit<Product, 'createdAt' | 'updatedAt'>) => {
     const { error } = await addProductAction(mapProductToDb(p));
     if (error) {
       console.warn('Error adding product', error);
       return false;
     }
     return true;
-  };
+  }, []);
 
-  const updateProduct = async (p: Product) => {
+  const updateProduct = useCallback(async (p: Product) => {
     const dbData = mapProductToDb(p);
     const { error } = await updateProductAction(p.id, dbData);
     if (error) {
@@ -329,16 +330,16 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
       return false;
     }
     return true;
-  };
+  }, []);
 
-  const deleteProduct = async (id: string) => {
+  const deleteProduct = useCallback(async (id: string) => {
     const { error } = await deleteProductAction(id);
     if (error) {
       console.warn('Error deleting product', error);
       return false;
     }
     return true;
-  };
+  }, []);
 
   // CATEGORIES MUTATIONS
   const addCategory = async (c: Category) => {
@@ -573,7 +574,7 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
   };
 
   // COMMENTS MUTATIONS
-  const addComment = async (c: any) => {
+  const addComment = async (c: Omit<CommentItem, 'id' | 'createdAt'>) => {
     const { data, error } = await addCommentAction(mapCommentToDb(c));
     if (error) { console.warn('Error adding comment', error); return false; }
     if (data && data[0]) {
@@ -582,7 +583,7 @@ export const AdminDbProvider: React.FC<{ children: React.ReactNode; initialData?
     return true;
   };
 
-  const updateComment = async (c: any) => {
+  const updateComment = async (c: CommentItem) => {
     const { data, error } = await updateCommentAction(c.id, mapCommentToDb(c));
     if (error) { console.warn('Error updating comment', error); return false; }
     if (data && data[0]) {

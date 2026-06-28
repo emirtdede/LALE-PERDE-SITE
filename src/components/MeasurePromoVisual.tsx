@@ -5,15 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function MeasurePromoVisual() {
-  const { language } = useLanguage();
   const router = useRouter();
 
   // Local state independent of localStorage
   const [width, setWidth] = useState<number>(300);
   const [height, setHeight] = useState<number>(220);
-  const [windowWidth, setWindowWidth] = useState<number>(260);
-  const [windowHeight, setWindowHeight] = useState<number>(180);
-  const [showWindow, setShowWindow] = useState<boolean>(true);
+  const [windowWidth] = useState<number>(260);
+  const [windowHeight] = useState<number>(180);
+  const [showWindow] = useState<boolean>(true);
 
   // Dragging states
   const [isDraggingWidth, setIsDraggingWidth] = useState(false);
@@ -71,11 +70,6 @@ export default function MeasurePromoVisual() {
       window.removeEventListener('pointerup', handlePointerUp);
     };
   }, [isDraggingWidth, isDraggingHeight]);
-
-  const handleStartWizard = () => {
-    // Send dimensions to the wizard page via URL query parameters
-    router.push(`/olcu-sihirbazi?width=${width}&height=${height}&winWidth=${windowWidth}&winHeight=${windowHeight}&showWin=${showWindow}`);
-  };
 
   return (
     <div style={{

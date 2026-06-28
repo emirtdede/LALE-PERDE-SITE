@@ -1,18 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+
 import Script from 'next/script';
 import { useGoogleAds } from '../context/GoogleAdsContext';
 
 export default function GoogleAdsTracker() {
   const { config, isReady } = useGoogleAds();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !isReady || !config.adsId) return null;
+  if (!isReady || !config.adsId) return null;
 
   return (
     <>

@@ -178,11 +178,7 @@ function AdminPageContent() {
     if (result.requires2FA) {
       setServerAdminEmail(result.adminEmail || '');
       setServerAdminPhone(result.adminPhone || '');
-      if (result.twoFactorType === 'both') {
-        setTwoFactorChoiceFlow(true);
-      } else {
-        sendOTPForLogin(result.twoFactorType as any, result.adminEmail, result.adminPhone);
-      }
+      sendOTPForLogin('email', result.adminEmail);
     } else {
       setIsAuthenticated(true);
       setTwoFactorFlow(false);
@@ -191,12 +187,11 @@ function AdminPageContent() {
     }
   };
 
-  const sendOTPForLogin = async (type: 'email' | 'phone', email?: string, phone?: string) => {
+  const sendOTPForLogin = async (type: 'email', email?: string) => {
     const targetEmail = email || serverAdminEmail;
-    const targetPhone = phone || serverAdminPhone;
     
     setLoginError('');
-    const result = await sendLoginOTP(type, targetEmail, targetPhone);
+    const result = await sendLoginOTP(targetEmail);
 
     if (result.error) {
       setLoginError(result.error);
@@ -207,7 +202,7 @@ function AdminPageContent() {
     setTwoFactorChoiceFlow(false);
     setTwoFactorInput('');
     setTwoFactorError('');
-    setTwoFactorSentDestination(type === 'email' ? `E-Posta (${targetEmail})` : `Telefon (${targetPhone})`);
+    setTwoFactorSentDestination(`E-Posta (${targetEmail})`);
   };
 
   const handleTwoFactorVerify = async (e: React.FormEvent) => {

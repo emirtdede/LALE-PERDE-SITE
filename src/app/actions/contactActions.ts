@@ -67,7 +67,7 @@ export async function submitContactForm(formData: {
     }
 
     // 3. (Optional) Send to Formspree securely from the server (Hiding the URL and IP from client)
-    const formspreeUrl = `https://formspree.io/f/${formData.formId || process.env.FORMSPREE_PROJECT_ID}`;
+    const formspreeUrl = `https://formspree.io/f/${process.env.FORMSPREE_PROJECT_ID}`;
     
     try {
       await fetch(formspreeUrl, {

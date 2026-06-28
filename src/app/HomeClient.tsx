@@ -132,6 +132,22 @@ export default function HomeClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const serviceParam = params.get('service');
+      if (serviceParam && services.length > 0) {
+        const decoded = decodeURIComponent(serviceParam);
+        const matched = services.find(
+          (s) => s.titleTr.toLowerCase() === decoded.toLowerCase() || s.titleEn.toLowerCase() === decoded.toLowerCase()
+        );
+        if (matched) {
+          setService(matched.titleTr);
+        }
+      }
+    }
+  }, [services]);
+
   // Measure wizard Card 3D tilt coordinate state
   const [wizardCoords, setWizardCoords] = useState({ x: 0, y: 0 });
   const [isWizardHovered, setIsWizardHovered] = useState(false);
@@ -502,7 +518,7 @@ export default function HomeClient({
       </section>
 
       {/* 5. PARALLAX GALLERY: TAMAMLANAN ÇALIŞMALAR */}
-      <section style={{ padding: '3.5rem 0 0 0', background: '#0A141D', overflow: 'hidden' }}>
+      <section id="projeler" style={{ padding: '3.5rem 0 0 0', background: '#0A141D', overflow: 'hidden' }}>
         <div style={{ width: '100%', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '2.5rem', padding: '0 2rem' }}>
             <span className="section-label" style={{ color: '#BD954B' }}>{t('fabric.label')}</span>
@@ -616,7 +632,7 @@ export default function HomeClient({
       </section>
 
       {/* 6. YORUMLAR (MARQUEE RIBBON) */}
-      <section className="comments-section" style={{ padding: '2rem 0 6rem 0', background: '#0A141D' }}>
+      <section id="yorumlar" className="comments-section" style={{ padding: '2rem 0 6rem 0', background: '#0A141D' }}>
         <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <LineDivider />

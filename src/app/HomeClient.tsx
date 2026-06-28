@@ -15,17 +15,17 @@ import MeasurePromoVisual from '../components/MeasurePromoVisual';
 import LineDivider from '../components/LineDivider';
 
 export default function HomeClient({ 
-  initialCategories, 
-  initialServices, 
-  initialSettings, 
-  initialHomeContent,
-  initialProducts
+  initialCategories = [], 
+  initialServices = [], 
+  initialSettings = null, 
+  initialHomeContent = null,
+  initialProducts = []
 }: { 
-  initialCategories: any[]; 
-  initialServices: any[]; 
-  initialSettings: any; 
-  initialHomeContent: any; 
-  initialProducts: any[];
+  initialCategories?: any[]; 
+  initialServices?: any[]; 
+  initialSettings?: any; 
+  initialHomeContent?: any; 
+  initialProducts?: any[];
 }) {
   const { t, language } = useLanguage();
   const router = useRouter();
@@ -189,6 +189,9 @@ export default function HomeClient({
 
     if (result.error) {
       console.warn('Form submission failed:', result.error);
+      setLoading(false);
+      alert('Form gönderilemedi. Lütfen tekrar deneyin.');
+      return;
     }
 
     setTimeout(() => {

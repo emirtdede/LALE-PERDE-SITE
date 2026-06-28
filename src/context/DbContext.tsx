@@ -767,7 +767,8 @@ export const DbProvider: React.FC<{ children: React.ReactNode; initialData?: Ini
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }), [
     categories, curtainTypes, fabricTypes, mountingTypes, settings, homeContent, 
-    services, guides, campaigns, inbox, searchLogs, visitorLogs, loading, comments
+    services, guides, campaigns, inbox, searchLogs, visitorLogs, loading, comments,
+    fetchServicesLazy, fetchGuidesLazy, fetchCampaignsLazy, fetchCommentsLazy
   ]);
 
   return (

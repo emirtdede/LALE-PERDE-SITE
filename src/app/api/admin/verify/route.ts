@@ -25,14 +25,15 @@ export async function GET() {
   }
 
   try {
-    await jwtVerify(token.value, getSecretKey());
+    const { payload } = await jwtVerify(token.value, getSecretKey());
+    const username = payload.username as string;
     
     // Fetch secure settings
     const { data: authRecord } = await supabaseAdmin
       .from('admin_auth')
       .select('admin_username, admin_email, admin_phone, two_factor_enabled, two_factor_type')
-      .eq('id', 'main_admin')
-      .single();
+      .or(`admin_username.eq.${username},admin_email.eq.${username}`)
+      .maybeSingle();
 
     return NextResponse.json({
       authenticated: true,

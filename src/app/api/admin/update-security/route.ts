@@ -31,7 +31,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    await jwtVerify(token.value, getSecretKey());
+    const { payload } = await jwtVerify(token.value, getSecretKey());
+    const username = payload.username as string;
     
     const body = await request.json();
     const { action, currentPassword, newPassword, adminEmail, adminPhone, twoFactorEnabled, twoFactorType, adminUsername } = body;
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
     const { data: authRecord, error: fetchError } = await supabaseAdmin
       .from('admin_auth')
       .select('id, admin_password_hash')
-      .eq('id', 'main_admin')
+      .or(`admin_username.eq.${username},admin_email.eq.${username}`)
       .single();
 
     if (fetchError || !authRecord) {

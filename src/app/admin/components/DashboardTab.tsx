@@ -24,6 +24,30 @@ interface GA4Stats {
   }>;
 }
 
+// Tooltip for Recharts
+const CustomTooltip = ({ active, payload }: any) => {
+  const { t } = useLanguage();
+  if (active && payload && payload.length) {
+    return (
+      <div style={{
+        backgroundColor: '#0A1118',
+        border: '1px solid rgba(212, 175, 55, 0.4)',
+        padding: '8px 12px',
+        borderRadius: '6px',
+        color: '#FFF',
+        fontSize: '0.85rem',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+      }}>
+        <p style={{ margin: 0, color: '#A3B3C2', marginBottom: '4px', fontSize: '0.75rem' }}>{payload[0].payload.fullDate}</p>
+        <p style={{ margin: 0, fontWeight: 600, color: '#D4AF37' }}>
+          {t('admin.dashboard.chartInfo.value')} {payload[0].value.toLocaleString('tr-TR')}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function DashboardTab() {
   const { inbox, visitorLogs, campaigns } = useDb();
   const { t, language } = useLanguage();
@@ -504,29 +528,6 @@ export default function DashboardTab() {
       };
     });
 
-    // eslint-disable-next-line react-hooks/static-components
-    const CustomTooltip = ({ active, payload, label }: any) => {
-      if (active && payload && payload.length) {
-        return (
-          <div style={{
-            backgroundColor: '#0A1118',
-            border: '1px solid rgba(212, 175, 55, 0.4)',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            color: '#FFF',
-            fontSize: '0.85rem',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-          }}>
-            <p style={{ margin: 0, color: '#A3B3C2', marginBottom: '4px', fontSize: '0.75rem' }}>{payload[0].payload.fullDate}</p>
-            <p style={{ margin: 0, fontWeight: 600, color: '#D4AF37' }}>
-              {t('admin.dashboard.chartInfo.value')} {payload[0].value.toLocaleString('tr-TR')}
-            </p>
-          </div>
-        );
-      }
-      return null;
-    };
-
     return (
       <div>
         <div style={{ width: '100%', height: '320px', minWidth: '600px' }}>
@@ -558,7 +559,6 @@ export default function DashboardTab() {
                 axisLine={false} 
                 tickFormatter={(value) => value.toLocaleString('tr-TR')}
               />
-              {/* eslint-disable-next-line react-hooks/static-components */}
               <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(212, 175, 55, 0.3)', strokeWidth: 1, strokeDasharray: '2 2' }} />
               <Area 
                 type="monotone" 

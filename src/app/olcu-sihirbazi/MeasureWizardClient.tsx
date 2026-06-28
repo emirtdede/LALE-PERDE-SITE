@@ -162,13 +162,13 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
         if (prod) setSelectedProduct(prod);
       }
       if (savedSubtype) setSelectedSubtype(savedSubtype);
-      if (savedWidth) setWidth(Number(savedWidth));
-      if (savedHeight) setHeight(Number(savedHeight));
-      if (savedWindowWidth) setWindowWidth(Number(savedWindowWidth));
-      if (savedWindowHeight) setWindowHeight(Number(savedWindowHeight));
+      if (savedWidth) { const val = Number(savedWidth); if (!isNaN(val)) setWidth(val); }
+      if (savedHeight) { const val = Number(savedHeight); if (!isNaN(val)) setHeight(val); }
+      if (savedWindowWidth) { const val = Number(savedWindowWidth); if (!isNaN(val)) setWindowWidth(val); }
+      if (savedWindowHeight) { const val = Number(savedWindowHeight); if (!isNaN(val)) setWindowHeight(val); }
       if (savedShowWindow) setShowWindow(savedShowWindow === 'true');
       if (savedFabricTypeId) setSelectedFabricTypeId(savedFabricTypeId);
-      if (savedStep) setStep(Number(savedStep));
+      if (savedStep) { const val = Number(savedStep); if (!isNaN(val)) setStep(val); }
     } catch (e) {
       console.warn('Failed to load from localStorage', e);
     }

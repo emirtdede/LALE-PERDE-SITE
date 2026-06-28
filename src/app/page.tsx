@@ -11,9 +11,6 @@ import {
 export const revalidate = 60; // ISR cache for 60 seconds since it's a public landing page
 
 export default async function Home() {
-  let categories: any[] = [];
-  let settings: any = null;
-  let homeContent: any = null;
   let services: any[] = [];
   let products: any[] = [];
 
@@ -34,9 +31,6 @@ export default async function Home() {
 
   return (
     <HomeClient 
-      initialCategories={categories}
-      initialSettings={settings}
-      initialHomeContent={homeContent}
       initialServices={services}
       initialProducts={products}
     />

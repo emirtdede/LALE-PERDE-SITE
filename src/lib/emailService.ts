@@ -1,47 +1,10 @@
 
-// We implement an in-memory rate limiter per email to prevent global DoS
-const emailRateLimitMap = new Map<string, number[]>();
-const MAX_EMAILS_PER_HOUR = 5;
-const HOUR_MS = 60 * 60 * 1000;
-
-function isEmailRateLimited(email: string): boolean {
-  const now = Date.now();
-  const timestamps = emailRateLimitMap.get(email) || [];
-  const recentTimestamps = timestamps.filter(ts => now - ts < HOUR_MS);
-  
-  if (recentTimestamps.length >= MAX_EMAILS_PER_HOUR) {
-    emailRateLimitMap.set(email, recentTimestamps);
-    return true;
-  }
-  
-  recentTimestamps.push(now);
-  emailRateLimitMap.set(email, recentTimestamps);
-  
-  // Basic cleanup
-  if (emailRateLimitMap.size > 100) {
-    const cutoff = now - HOUR_MS;
-    for (const [key, times] of emailRateLimitMap.entries()) {
-      const validTimes = times.filter(t => t > cutoff);
-      if (validTimes.length === 0) {
-        emailRateLimitMap.delete(key);
-      } else {
-        emailRateLimitMap.set(key, validTimes);
-      }
-    }
-  }
-  return false;
-}
-
 export async function sendOTPEmail(email: string, code: string, type: '2fa' | 'change' | 'reset') {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
     return;
   }
 
-  // Use localized in-memory rate limiting per email instead of a global limit
-  if (isEmailRateLimited(email)) {
-    throw new Error('Çok fazla kod talep ettiniz. Lütfen bir süre bekleyin.');
-  }
 
   const emailSubject = type === 'change' 
     ? 'Lale Perde Yönetim Paneli - Güvenlik Bilgisi Değişikliği' 
@@ -59,7 +22,7 @@ export async function sendOTPEmail(email: string, code: string, type: '2fa' | 'c
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendApiKey}` },
     body: JSON.stringify({
-      from: 'Lale Perde Güvenlik <onboarding@resend.dev>',
+      from: `Lale Perde Güvenlik <${process.env.RESEND_FROM_EMAIL || 'iletisim@laleperde.com'}>`,
       to: email,
       subject: emailSubject,
       html: `

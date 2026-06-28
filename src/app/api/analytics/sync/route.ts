@@ -392,7 +392,7 @@ export async function POST() {
 
     return NextResponse.json({
       success: false,
-      error: err.message || 'An unexpected error occurred.',
+      error: 'Analiz senkronizasyonu sırasında beklenmeyen bir hata oluştu.',
       data: fallbackRecord?.data || { activeUsers: 0, screenPageViews: 0, sessions: 0, whatsappClicks: 0, mapsClicks: 0, formSubmits: 0, daily: [] },
       updatedAt: fallbackRecord?.updated_at || new Date().toISOString(),
       quotaExceeded: fallbackRecord?.quota_exceeded || false,
@@ -417,7 +417,7 @@ export async function GET() {
     if (error) {
       return NextResponse.json({
         success: false,
-        error: error.message
+        error: 'İç sunucu hatası.'
       }, { status: 500 });
     }
 
@@ -442,7 +442,7 @@ export async function GET() {
   } catch (err: any) {
     return NextResponse.json({
       success: false,
-      error: err.message
+      error: 'İç sunucu hatası.'
     }, { status: 500 });
   }
 }

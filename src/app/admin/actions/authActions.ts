@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 const getSecretKey = () => {
   if (!process.env.JWT_SECRET) {
@@ -20,15 +21,15 @@ const supabaseAdmin = createClient(
 import { sendOTPEmail } from '@/lib/emailService';
 
 // Sadece sunucuda çalışan güvenli rastgele kod üretici
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+const generateOTP = () => crypto.randomInt(100000, 1000000).toString();
 
 // 1. Giriş Ön Kontrolü
 export async function loginAttempt(username: string, password: string) {
   const { data: authRecord } = await supabaseAdmin
     .from('admin_auth')
     .select('admin_username, admin_email, admin_phone, admin_password_hash, two_factor_enabled, two_factor_type')
-    .eq('id', 'main_admin')
-    .single();
+    .or(`admin_username.eq.${username},admin_email.eq.${username}`)
+    .maybeSingle();
 
   if (!authRecord) return { error: 'Güvenlik ayarları okunamadı.' };
 
@@ -220,16 +221,16 @@ export async function completePasswordReset(newPassword: string) {
     }
 
     // Verify token validity
-    await jwtVerify(pendingToken, getSecretKey());
+    const { payload } = await jwtVerify(pendingToken, getSecretKey());
 
     // Hash the password securely using bcrypt
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update the admin_auth table
+    // Update the admin_auth table based on the email in the payload
     const { error: updateError } = await supabaseAdmin
       .from('admin_auth')
       .update({ admin_password_hash: hashedPassword })
-      .eq('id', 'main_admin');
+      .eq('admin_email', payload.email);
 
     if (updateError) {
       console.error('Password reset DB update error:', updateError);

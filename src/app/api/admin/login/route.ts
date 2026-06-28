@@ -34,11 +34,11 @@ export async function POST(request: Request) {
     const { data: authRecord, error } = await supabaseAdmin
       .from('admin_auth')
       .select('admin_username, admin_email, admin_phone, admin_password_hash, two_factor_enabled, two_factor_type')
-      .eq('id', 'main_admin')
-      .single();
+      .or(`admin_username.eq.${username},admin_email.eq.${username}`)
+      .maybeSingle();
 
     if (error || !authRecord) {
-      return NextResponse.json({ error: 'Güvenlik ayarları okunamadı' }, { status: 500 });
+      return NextResponse.json({ error: 'Güvenlik ayarları okunamadı veya geçersiz kullanıcı' }, { status: 500 });
     }
 
     const isValidUser = (username === authRecord.admin_username || username === authRecord.admin_email);

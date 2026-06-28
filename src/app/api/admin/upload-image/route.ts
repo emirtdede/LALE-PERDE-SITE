@@ -34,22 +34,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    // 2. Parse request
-    const body = await request.json();
-    const { imageBase64, folder = 'uploads' } = body;
+    // 2. Parse request as FormData
+    const formData = await request.formData();
+    const image = formData.get('image') as File | null;
+    const folder = (formData.get('folder') as string) || 'uploads';
 
-    if (!imageBase64 || !imageBase64.includes('base64,')) {
-      return NextResponse.json({ error: 'Geçersiz veya eksik resim formatı' }, { status: 400 });
+    if (!image) {
+      return NextResponse.json({ error: 'Geçersiz veya eksik resim' }, { status: 400 });
     }
 
-    // 3. Convert Base64 to Buffer
-    const base64Data = imageBase64.split('base64,')[1];
-    const mimeType = imageBase64.split(';')[0].split(':')[1] || 'image/webp';
+    const mimeType = image.type || 'image/webp';
     const extension = mimeType.split('/')[1] || 'webp';
     
     // Create unique filename
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${extension}`;
-    const buffer = Buffer.from(base64Data, 'base64');
+    const arrayBuffer = await image.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
     // 4. Upload to Supabase Storage
     const { data, error } = await supabaseAdmin.storage
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Storage upload error:', error);
-      return NextResponse.json({ error: 'Resim yüklenemedi: ' + error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Resim yüklenemedi. Lütfen tekrar deneyin.' }, { status: 500 });
     }
 
     // 5. Get public URL
@@ -73,6 +73,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, url: publicUrlData.publicUrl });
   } catch (error: any) {
     console.error('Upload Error:', error);
-    return NextResponse.json({ error: 'Sunucu hatası: ' + error.message }, { status: 500 });
+    return NextResponse.json({ error: 'İşlem sırasında bir hata oluştu. Lütfen tekrar deneyin.' }, { status: 500 });
   }
 }

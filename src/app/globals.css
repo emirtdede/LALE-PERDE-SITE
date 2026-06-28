@@ -1317,6 +1317,11 @@ footer {
   .section-title {
     font-size: 2.2rem !important;
   }
+
+  .appointment-title {
+    font-size: 2.2rem !important;
+    line-height: 1.3 !important;
+  }
   
   .collections-grid {
     grid-template-columns: 1fr !important;
@@ -1442,6 +1447,10 @@ footer {
   .hero-subtitle {
     font-size: 0.85rem !important;
     letter-spacing: 0.15em !important;
+  }
+  .appointment-title {
+    font-size: 1.8rem !important;
+    line-height: 1.3 !important;
   }
   .kinetic-carousel-wheel {
     width: 195px !important;

@@ -2087,3 +2087,94 @@ input[type="number"] {
     transform: translateY(0);
   }
 }
+
+/* ==========================================
+   Admin Panel Responsive Styling Overrides
+   ========================================== */
+@media (max-width: 1024px) {
+  /* Force admin pages main content area padding to fit mobile viewport */
+  main:has(#admin-tab-actions),
+  main:has(.admin-dashboard),
+  main:has([id*="admin"]) {
+    padding: 1rem !important;
+  }
+
+  /* Target all inline grid templates in admin section and force stack */
+  main div[style*="gridTemplateColumns"],
+  main div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Reset column spans so full-width rows stack correctly */
+  main div[style*="gridColumn: span 2"],
+  main div[style*="gridColumn:span 2"],
+  main div[style*="grid-column: span 2"],
+  main div[style*="grid-column:span 2"],
+  main div[style*="gridColumn: span 3"],
+  main div[style*="gridColumn:span 3"],
+  main div[style*="grid-column: span 3"],
+  main div[style*="grid-column:span 3"],
+  main div[style*="gridColumn: span 4"],
+  main div[style*="gridColumn:span 4"],
+  main div[style*="grid-column: span 4"],
+  main div[style*="grid-column:span 4"] {
+    grid-column: span 1 !important;
+  }
+
+  /* Make admin tables horizontally scrollable so they don't break/squeeze */
+  main table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap !important;
+  }
+
+  /* Admin forms container and boxes alignment */
+  main [style*="display: flex"][style*="gap:"],
+  main [style*="display:flex"][style*="gap:"] {
+    /* If flex elements are squeezed, allow wrap */
+    flex-wrap: wrap !important;
+  }
+
+  /* For large inline block lists or flex views, stack them */
+  main .dashboard-metric-grid,
+  main .admin-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Fix forms or panels with side-by-side flex layout */
+  main [style*="display: flex"][style*="flexDirection: row"][style*="gap: 2rem"],
+  main [style*="display:flex"][style*="flex-direction:row"][style*="gap:2rem"] {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Shrink admin headers slightly */
+  main h2 {
+    font-size: 1.5rem !important;
+  }
+
+  /* Stack button containers */
+  #admin-tab-actions,
+  #admin-tab-actions div {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Forms with custom margins or flex wrappers */
+  main [style*="display: flex"][style*="justifyContent: space-between"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  /* Sub tabs / Tab switchers (Curtain Types, Fabric Types, etc.) */
+  main [style*="border-bottom: 2px solid"],
+  main [style*="borderBottom: 2px solid"] {
+    flex-wrap: wrap !important;
+  }
+}

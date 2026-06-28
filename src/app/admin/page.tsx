@@ -81,6 +81,22 @@ function AdminPageContent() {
   const [isSidebarMinimal, setIsSidebarMinimal] = useState(false);
   const [isSidebarClosed, setIsSidebarClosed] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [isAdminMobile, setIsAdminMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsAdminMobile(mobile);
+      if (mobile) {
+        setIsSidebarClosed(true);
+      } else {
+        setIsSidebarClosed(false);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Search state
   const [adminSearchQuery, setAdminSearchQuery] = useState('');
@@ -504,8 +520,33 @@ function AdminPageContent() {
         </button>
       )}
 
+      {/* Backdrop overlay for mobile sidebar */}
+      {isAdminMobile && !isSidebarClosed && (
+        <div 
+          onClick={() => handleSetSidebarClosed(true)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 999
+          }}
+        />
+      )}
+
       {/* Sidebar Wrapper */}
-      <div style={{ 
+      <div style={isAdminMobile ? {
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: '260px',
+        zIndex: 1000,
+        boxShadow: '4px 0 15px rgba(0,0,0,0.5)',
+        transform: isSidebarClosed ? 'translateX(-100%)' : 'translateX(0)',
+        transition: 'transform 0.3s ease',
+        overflow: 'hidden'
+      } : { 
         width: `${currentSidebarWidth}px`, 
         flexShrink: 0,
         overflow: 'hidden',
@@ -516,6 +557,9 @@ function AdminPageContent() {
           setActiveTab={(tab) => {
             handleTabChange(tab);
             setAdminSearchQuery(''); // Clear search when tab changes
+            if (isAdminMobile) {
+              setIsSidebarClosed(true);
+            }
           }} 
           handleLogout={handleLogout}
           isMinimal={isSidebarMinimal}
@@ -525,7 +569,7 @@ function AdminPageContent() {
       </div>
 
       {/* Sidebar Drag Resizer Handle */}
-      {!isSidebarClosed && !isSidebarMinimal && (
+      {!isAdminMobile && !isSidebarClosed && !isSidebarMinimal && (
         <div 
           onMouseDown={startResizing}
           style={{
@@ -546,7 +590,7 @@ function AdminPageContent() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', overflow: 'hidden' }}>
         
         {/* Main Content Area */}
-        <main style={{ flex: 1, padding: '2rem 3rem', overflowY: 'auto', position: 'relative' }}>
+        <main style={{ flex: 1, padding: isAdminMobile ? '1.5rem 1rem' : '2rem 3rem', overflowY: 'auto', position: 'relative' }}>
           
           {/* Unified Header Bar */}
           <div style={{
@@ -634,7 +678,25 @@ function AdminPageContent() {
                   padding: '4px 8px'
                 }}
               >
-                {theme === 'light' ? '☾' : '☼'}
+                <span suppressHydrationWarning style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {theme === 'light' ? (
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block' }}>
+                      <circle cx="12" cy="12" r="5"></circle>
+                      <line x1="12" y1="1" x2="12" y2="3"></line>
+                      <line x1="12" y1="21" x2="12" y2="23"></line>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                      <line x1="1" y1="12" x2="3" y2="12"></line>
+                      <line x1="21" y1="12" x2="23" y2="12"></line>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                  )}
+                </span>
               </button>
 
               {/* Language Switch */}

@@ -502,10 +502,10 @@ export default function HomeClient({
                         }
                       }}
                       style={{
-                        gridColumnStart: item.gridColumnStart,
-                        gridColumnEnd: item.gridColumnEnd,
-                        gridRowStart: item.gridRowStart,
-                        gridRowEnd: item.gridRowEnd,
+                        gridColumnStart: isMobile ? 1 : item.gridColumnStart,
+                        gridColumnEnd: isMobile ? 13 : item.gridColumnEnd,
+                        gridRowStart: isMobile ? 'auto' : item.gridRowStart,
+                        gridRowEnd: isMobile ? 'auto' : item.gridRowEnd,
                         position: 'relative',
                         minHeight: isMobile ? '260px' : 'auto',
                         borderRadius: '12px',

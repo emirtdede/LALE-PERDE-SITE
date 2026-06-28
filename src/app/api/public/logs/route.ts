@@ -58,7 +58,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
-    const body = await request.json();
+    const text = await request.text();
+    if (!text) {
+      return NextResponse.json({ error: 'Empty body' }, { status: 400 });
+    }
+    const body = JSON.parse(text);
     const { type, data } = body;
 
     if (!type || !data) {
@@ -127,7 +131,11 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
-    const body = await request.json();
+    const text = await request.text();
+    if (!text) {
+      return NextResponse.json({ error: 'Empty body' }, { status: 400 });
+    }
+    const body = JSON.parse(text);
     const { type, id, data } = body;
 
     if (type === 'visitor_duration' && id && data?.duration !== undefined) {

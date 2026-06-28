@@ -7,7 +7,7 @@ export default function LegalPage() {
   const { language } = useLanguage();
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 2rem 5rem', lineHeight: 1.8 }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '160px 2rem 5rem', lineHeight: 1.8 }}>
       {language === 'tr' ? (
         <>
           <h1 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '2rem', textAlign: 'left' }}>Gizlilik Politikası</h1>

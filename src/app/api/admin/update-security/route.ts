@@ -2,14 +2,11 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-if (!supabaseServiceKey) {
-  throw new Error('FATAL: SUPABASE_SERVICE_ROLE_KEY is missing!');
-}
 
 // Create a Supabase client with the Service Role Key to bypass RLS
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  supabaseServiceKey
+  supabaseServiceKey || 'missing-key'
 );
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
@@ -30,8 +27,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
   }
 
+  let secretKey;
   try {
-    const { payload } = await jwtVerify(token.value, getSecretKey());
+    secretKey = getSecretKey();
+  } catch (err) {
+    return NextResponse.json({ error: 'Sistem konfigürasyon hatası' }, { status: 500 });
+  }
+
+  try {
+    const { payload } = await jwtVerify(token.value, secretKey);
     const username = payload.username as string;
     
     const body = await request.json();

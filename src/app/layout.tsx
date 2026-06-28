@@ -36,28 +36,13 @@ export default async function RootLayout({
 
   try {
     const [
-      { data: rawCats },
-      { data: rawCurtains },
-      { data: rawFabrics },
-      { data: rawSettings },
-      { data: rawHome },
-      { data: rawMountings }
+      { data: rawSettings }
     ] = await Promise.all([
-      supabase.from('categories').select('*').order('display_order', { ascending: true }),
-      supabase.from('curtain_types').select('*').order('display_order', { ascending: true }),
-      supabase.from('fabric_types').select('*').order('display_order', { ascending: true }),
-      supabase.from('site_settings').select('id, store_name, phone, email, address, whatsapp_number, google_maps_embed, announcement_tr, announcement_en, announcement_active, working_hours_tr, working_hours_en, google_ads_id, ads_label_whatsapp, ads_label_contact, shopier_url, instagram_url, facebook_url, linkedin_url, campaign_interval, logo_config'),
-      supabase.from('home_page_content').select('*'),
-      supabase.from('mounting_types').select('*').order('display_order', { ascending: true })
+      supabase.from('site_settings').select('id, store_name, phone, email, address, whatsapp_number, google_maps_embed, announcement_tr, announcement_en, announcement_active, working_hours_tr, working_hours_en, google_ads_id, ads_label_whatsapp, ads_label_contact, shopier_url, instagram_url, facebook_url, linkedin_url, campaign_interval, logo_config')
     ]);
 
     initialData = {
-      categories: rawCats ? rawCats.map(mapCategoryFromDb) : [],
-      curtainTypes: rawCurtains ? rawCurtains.map(mapCurtainTypeFromDb) : [],
-      fabricTypes: rawFabrics ? rawFabrics.map(mapFabricTypeFromDb) : [],
-      mountingTypes: rawMountings ? rawMountings.map(mapMountingTypeFromDb) : [],
       settings: (rawSettings && rawSettings[0]) ? mapSettingsFromDb(rawSettings[0]) : null,
-      homeContent: (rawHome && rawHome[0]) ? mapHomeContentFromDb(rawHome[0]) : null,
     };
   } catch (err) {
     console.error('Layout data fetching error:', err);

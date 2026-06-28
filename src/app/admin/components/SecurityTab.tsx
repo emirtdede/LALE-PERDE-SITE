@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { SystemSettings } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 import { sendSecurityOTP, verifySecurityOTP } from '../actions/authActions';
 
 export default function SecurityTab() {
-  const { settings: dbSettings, updateSettings } = useDb();
+  const { settings: dbSettings, updateSettings } = useAdminDb();
   const { t } = useLanguage();
   const [settings, setSettings] = useState<SystemSettings | null>(null);
   const [saved, setSaved] = useState(false);

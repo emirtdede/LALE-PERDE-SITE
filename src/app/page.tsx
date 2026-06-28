@@ -13,26 +13,34 @@ export const revalidate = 60; // ISR cache for 60 seconds since it's a public la
 export default async function Home() {
   let services: any[] = [];
   let products: any[] = [];
+  let categories: any[] = [];
+  let homeContent: any = null;
 
   try {
-    const [servicesRes, productsRes] = await Promise.all([
+    const [servicesRes, productsRes, catsRes, homeRes] = await Promise.all([
       supabase.from('services').select('*').eq('status', 'active').order('display_order', { ascending: true }),
-      supabase.from('products').select('*').eq('status', 'active').order('display_order', { ascending: true })
+      supabase.from('products').select('*').eq('status', 'active').order('display_order', { ascending: true }),
+      supabase.from('categories').select('*').order('display_order', { ascending: true }),
+      supabase.from('home_page_content').select('*')
     ]);
 
     if (servicesRes.error) console.error('Services error:', servicesRes.error);
     if (productsRes.error) console.error('Products error:', productsRes.error);
-
-    services = (servicesRes.data || []).map(mapServiceFromDb);
-    products = (productsRes.data || []).map(mapProductFromDb);
+    
+    if (servicesRes.data) services = servicesRes.data.map(mapServiceFromDb);
+    if (productsRes.data) products = productsRes.data.map(mapProductFromDb);
+    if (catsRes.data) categories = catsRes.data.map(mapCategoryFromDb);
+    if (homeRes.data && homeRes.data[0]) homeContent = mapHomeContentFromDb(homeRes.data[0]);
   } catch (err) {
-    console.error('Home Page SSR data fetching error:', err);
+    console.error('Home page data fetching error:', err);
   }
 
   return (
     <HomeClient 
-      initialServices={services}
-      initialProducts={products}
+      initialServices={services} 
+      initialProducts={products} 
+      initialCategories={categories}
+      initialHomeContent={homeContent}
     />
   );
 }

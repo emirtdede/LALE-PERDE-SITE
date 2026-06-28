@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { MountingType } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -35,7 +35,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function MountingTypesSubTab() {
-  const { mountingTypes: dbMountings, categories, curtainTypes, addMountingType, updateMountingType, deleteMountingType } = useDb();
+  const { mountingTypes: dbMountings, categories, curtainTypes, addMountingType, updateMountingType, deleteMountingType } = useAdminDb();
   const { t } = useLanguage();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<MountingType>>({});

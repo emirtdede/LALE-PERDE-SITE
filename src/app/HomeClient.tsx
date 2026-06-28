@@ -44,9 +44,9 @@ export default function HomeClient({
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { fetchCommentsLazy, comments, homeContent: dbHomeContent, categories: dbCategories, settings: dbSettings } = useDb();
+  const { fetchCommentsLazy, comments, settings: dbSettings } = useDb();
 
-  const categories = dbCategories && dbCategories.length > 0 ? dbCategories : initialCategories;
+  const categories = initialCategories && initialCategories.length > 0 ? initialCategories : [];
   const services = initialServices && initialServices.length > 0 ? initialServices : [
     {
       id: 'work-1',
@@ -110,7 +110,7 @@ export default function HomeClient({
     }
   ];
   const settings = dbSettings || initialSettings;
-  const homeContent = dbHomeContent || initialHomeContent;
+  const homeContent = initialHomeContent;
 
   // Lightbox Zoom & Pan states
   const [activeLightboxImage, setActiveLightboxImage] = useState<string | null>(null);
@@ -817,13 +817,13 @@ export default function HomeClient({
               touchAction: 'none'
             }}
           >
-            <img 
+            <Image 
               src={activeLightboxImage} 
               alt="Reference Detail" 
               draggable={false}
+              fill
+              sizes="80vw"
               style={{
-                maxWidth: '100%',
-                maxHeight: '100%',
                 objectFit: 'contain',
                 transform: `translate(${lightboxOffset.x}px, ${lightboxOffset.y}px) scale(${lightboxZoom})`,
                 transition: isLightboxDragging ? 'none' : 'transform 0.25s cubic-bezier(0.1, 0.8, 0.25, 1)',

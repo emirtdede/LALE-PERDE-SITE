@@ -57,8 +57,10 @@ interface SearchResultItem {
   snippet: string;
 }
 
-export default function AdminPage() {
-  const { settings, updateSettings, services, guides, inbox, campaigns, fetchServicesLazy, fetchGuidesLazy, fetchCampaignsLazy } = useDb();
+import { AdminDbProvider, useAdminDb } from '@/context/AdminDbContext';
+
+function AdminPageContent() {
+  const { settings, updateSettings, services, guides, inbox, campaigns, fetchServicesLazy, fetchGuidesLazy, fetchCampaignsLazy } = useAdminDb();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
@@ -809,3 +811,6 @@ export default function AdminPage() {
     </div>
   );
 }
+
+export default function AdminPage() { return <AdminDbProvider><AdminPageContent /></AdminDbProvider>; }
+

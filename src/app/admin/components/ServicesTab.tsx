@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { ServiceItem } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -20,7 +20,7 @@ const TrashIcon = () => (
 
 
 export default function ServicesTab() {
-  const { services: dbServices, addService, updateService, deleteService } = useDb();
+  const { services: dbServices, addService, updateService, deleteService } = useAdminDb();
   const { t, language } = useLanguage();
 
   const [services, setServices] = useState<ServiceItem[]>([]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { Campaign, SystemSettings } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -16,7 +16,7 @@ const emptyCampaign: Omit<Campaign, 'id'> = {
 };
 
 export default function CampaignsTab() {
-  const { campaigns: dbCampaigns, settings: dbSettings, updateSettings, addCampaign, updateCampaign, deleteCampaign } = useDb();
+  const { campaigns: dbCampaigns, settings: dbSettings, updateSettings, addCampaign, updateCampaign, deleteCampaign } = useAdminDb();
   const { t } = useLanguage();
   const [settings, setSettings] = useState<SystemSettings | null>(null);
   const [savedBanner, setSavedBanner] = useState(false);

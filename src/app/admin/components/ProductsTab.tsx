@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { Product, Category } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 import { uploadImageToServer } from '@/utils/uploadImage';
@@ -406,7 +406,7 @@ const getNearestColor = (hex: string) => {
 };
 
 export default function ProductsTab() {
-  const { fetchProductsPaginated, categories: dbCategories, addProduct, updateProduct, deleteProduct, curtainTypes, fabricTypes, mountingTypes } = useDb();
+  const { fetchProductsPaginated, categories: dbCategories, addProduct, updateProduct, deleteProduct, curtainTypes, fabricTypes, mountingTypes } = useAdminDb();
   const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);

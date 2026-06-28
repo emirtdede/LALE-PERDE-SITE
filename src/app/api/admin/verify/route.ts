@@ -24,8 +24,15 @@ export async function GET() {
     return NextResponse.json({ authenticated: false });
   }
 
+  let secretKey;
   try {
-    const { payload } = await jwtVerify(token.value, getSecretKey());
+    secretKey = getSecretKey();
+  } catch (err) {
+    return NextResponse.json({ authenticated: false, error: 'Sistem konfigürasyon hatası' }, { status: 500 });
+  }
+
+  try {
+    const { payload } = await jwtVerify(token.value, secretKey);
     const username = payload.username as string;
     
     // Fetch secure settings

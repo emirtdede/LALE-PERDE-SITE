@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { supabase } from '@/lib/supabaseClient';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useLanguage } from '@/context/LanguageContext';
@@ -49,7 +49,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export default function DashboardTab() {
-  const { inbox, visitorLogs, campaigns } = useDb();
+  const { inbox, visitorLogs, campaigns } = useAdminDb();
   const { t, language } = useLanguage();
   const [productCount, setProductCount] = useState(0);
 

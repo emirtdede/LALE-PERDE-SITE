@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { CurtainType, Category } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -35,7 +35,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function CurtainTypesSubTab() {
-  const { curtainTypes: dbCurtains, categories, addCurtainType, updateCurtainType, deleteCurtainType } = useDb();
+  const { curtainTypes: dbCurtains, categories, addCurtainType, updateCurtainType, deleteCurtainType } = useAdminDb();
   const { t } = useLanguage();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<CurtainType>>({});

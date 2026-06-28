@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function CommentsTab() {
-  const { comments: dbComments, addComment, updateComment, deleteComment, fetchCommentsLazy } = useDb();
+  const { comments: dbComments, addComment, updateComment, deleteComment, fetchCommentsLazy } = useAdminDb();
   const { t, language } = useLanguage();
 
   const [comments, setComments] = useState<any[]>([]);

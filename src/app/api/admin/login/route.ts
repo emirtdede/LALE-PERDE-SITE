@@ -12,14 +12,11 @@ const getSecretKey = () => {
 };
 
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-if (!supabaseServiceKey) {
-  throw new Error('FATAL: SUPABASE_SERVICE_ROLE_KEY is missing!');
-}
 
 // Create a Supabase client with the Service Role Key to bypass RLS
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  supabaseServiceKey
+  supabaseServiceKey || 'missing-key'
 );
 
 export async function POST(request: Request) {
@@ -57,13 +54,21 @@ export async function POST(request: Request) {
 
       // Create session
       const alg = 'HS256';
+      
+      let secretKey;
+      try {
+        secretKey = getSecretKey();
+      } catch (err) {
+        return NextResponse.json({ error: 'Sistem konfigürasyon hatası' }, { status: 500 });
+      }
+
       const token = await new SignJWT({ 
         username,
         role: 'admin'
       })
-        .setProtectedHeader({ alg: 'HS256' })
+        .setProtectedHeader({ alg })
         .setExpirationTime('24h')
-        .sign(getSecretKey());
+        .sign(secretKey);
 
       // Set HTTP-only cookie
       const cookieStore = await cookies();

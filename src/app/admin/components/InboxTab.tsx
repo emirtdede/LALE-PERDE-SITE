@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { InboxMessage } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function InboxTab() {
-  const { fetchInboxPaginated, updateInboxMessage } = useDb();
+  const { fetchInboxPaginated, updateInboxMessage } = useAdminDb();
   const { t } = useLanguage();
   const [messages, setMessages] = useState<InboxMessage[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<InboxMessage | null>(null);

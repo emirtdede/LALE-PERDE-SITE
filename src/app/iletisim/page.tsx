@@ -9,7 +9,7 @@ import { submitContactForm } from '../actions/contactActions';
 
 export default function IletisimPage() {
   const { t, language } = useLanguage();
-  const { settings, addInboxMessage } = useDb();
+  const { settings } = useDb();
   const { trackConversion } = useGoogleAds();
 
   const [name, setName] = useState('');

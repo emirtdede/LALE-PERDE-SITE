@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { Category, CurtainType, FabricType, MountingType } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 import { uploadImageToServer } from '@/utils/uploadImage';
@@ -308,7 +308,7 @@ const labelStyle: React.CSSProperties = {
 export default function CategoriesTab() {
   const [activeSubTab, setActiveSubTab] = useState<'sectors' | 'curtains' | 'fabrics' | 'mountings'>('sectors');
   
-  const { categories: dbCategories, addCategory, updateCategory, deleteCategory } = useDb();
+  const { categories: dbCategories, addCategory, updateCategory, deleteCategory } = useAdminDb();
   const { t } = useLanguage();
   const [categories, setCategories] = useState<Category[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);

@@ -156,6 +156,16 @@ export interface ServiceItem {
   focalY?: number;
 }
 
+export interface CommentItem {
+  id: string;
+  author: string;
+  contentTr: string;
+  contentEn: string;
+  rating: number;
+  isActive: boolean;
+  displayOrder: number;
+}
+
 export interface GuideItem {
   id: string;
   titleTr: string;

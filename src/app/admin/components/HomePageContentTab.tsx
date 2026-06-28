@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { HomePageContent, Category } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 import ReferencesGridEditor from './ReferencesGridEditor';
@@ -14,7 +14,7 @@ export default function HomePageContentTab() {
     updateSettings,
     addCategory,
     updateCategory
-  } = useDb();
+  } = useAdminDb();
   
   const { t, language } = useLanguage();
   const [content, setContent] = useState<HomePageContent | null>(null);

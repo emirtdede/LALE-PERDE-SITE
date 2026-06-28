@@ -79,6 +79,10 @@
   color: var(--color-text) !important;
 }
 
+[data-theme="dark"] h4.product-detail-label {
+  color: var(--color-accent) !important;
+}
+
 /* Scroll-specific dark mode overrides are handled below in header section */
 
 /* Base Styles */

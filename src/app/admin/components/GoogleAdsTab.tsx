@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function GoogleAdsTab() {
-  const { settings, updateSettings } = useDb();
+  const { settings, updateSettings } = useAdminDb();
   const { t } = useLanguage();
   const [googleAdsId, setGoogleAdsId] = useState('');
   const [labelWhatsapp, setLabelWhatsapp] = useState('');

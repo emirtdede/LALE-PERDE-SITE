@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { FabricType, Category } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -35,7 +35,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function FabricTypesSubTab() {
-  const { fabricTypes: dbFabrics, categories, addFabricType, updateFabricType, deleteFabricType } = useDb();
+  const { fabricTypes: dbFabrics, categories, addFabricType, updateFabricType, deleteFabricType } = useAdminDb();
   const { t } = useLanguage();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<FabricType>>({});

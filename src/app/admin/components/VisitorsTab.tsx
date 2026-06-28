@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { VisitorLog } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -12,7 +12,7 @@ interface Visitor {
 }
 
 export default function VisitorsTab() {
-  const { fetchVisitorLogsPaginated } = useDb();
+  const { fetchVisitorLogsPaginated } = useAdminDb();
   const { t } = useLanguage();
   const [logs, setLogs] = useState<VisitorLog[]>([]);
   const [searchTerm, setSearchTerm] = useState('');

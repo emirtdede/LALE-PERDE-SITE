@@ -202,7 +202,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
           </h1>
 
           <div style={{ paddingBottom: '2rem', borderBottom: '1px solid var(--color-border)', marginBottom: '2rem' }}>
-            <h4 style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--color-accent)', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
+            <h4 className="product-detail-label" style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--color-accent)', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
               {t('catalog.fabricType')}
             </h4>
             <p style={{ fontSize: '1.05rem', fontWeight: 400 }}>
@@ -216,7 +216,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
 
           {/* Colors available */}
           <div style={{ marginBottom: '2rem' }}>
-            <h4 style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--color-accent)', marginBottom: '0.8rem', letterSpacing: '0.05em' }}>
+            <h4 className="product-detail-label" style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--color-accent)', marginBottom: '0.8rem', letterSpacing: '0.05em' }}>
               {t('catalog.color')}
             </h4>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -231,7 +231,7 @@ export default function ProductDetailClient({ initialProduct }: ProductDetailCli
 
           {/* Tech specs */}
           <div style={{ marginBottom: '2.5rem' }}>
-            <h4 style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--color-accent)', marginBottom: '0.8rem', letterSpacing: '0.05em' }}>
+            <h4 className="product-detail-label" style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--color-accent)', marginBottom: '0.8rem', letterSpacing: '0.05em' }}>
               {language === 'tr' ? 'Özellikler' : 'Specs'}
             </h4>
             <ul style={{ paddingLeft: '1.2rem', fontSize: '0.95rem', opacity: 0.8 }}>

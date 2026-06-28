@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useDb } from '@/context/DbContext';
+import { useAdminDb } from '@/context/AdminDbContext';
 import { GuideItem } from '@/context/dbTypes';
 import { useLanguage } from '@/context/LanguageContext';
 import { uploadImageToServer } from '@/utils/uploadImage';
@@ -264,7 +264,7 @@ const ImageCropModal: React.FC<ImageCropModalProps> = ({ imageSrc, onCrop, onCan
 };
 
 export default function GuidesTab() {
-  const { guides: dbGuides, addGuide, updateGuide, deleteGuide } = useDb();
+  const { guides: dbGuides, addGuide, updateGuide, deleteGuide } = useAdminDb();
   const { t } = useLanguage();
   const [guides, setGuides] = useState<GuideItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);

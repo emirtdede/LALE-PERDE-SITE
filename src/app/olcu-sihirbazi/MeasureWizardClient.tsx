@@ -11,6 +11,8 @@ import { useGoogleAds } from '../../context/GoogleAdsContext';
 interface MeasureWizardClientProps {
   initialProducts: Product[];
   initialCategories: Category[];
+  initialMountingTypes?: any[];
+  initialFabricTypes?: any[];
 }
 
 // Category limits definition
@@ -53,10 +55,6 @@ const getCategoryIcon = (key: string) => {
 };
 
 const findCategoryForUsage = (usageKey: string, categoriesList: Category[]) => {
-  const data = CATEGORY_LIMITS[usageKey];
-  if (!data) return null;
-  const label = data.label.toLowerCase();
-  
   return categoriesList.find(c => {
     const name = (c.nameTr || '').toLowerCase();
     const slug = (c.slug || '').toLowerCase();
@@ -69,11 +67,11 @@ const findCategoryForUsage = (usageKey: string, categoriesList: Category[]) => {
     if (usageKey === 'dis_mekan' && (name.includes('dış') || name.includes('dis') || name.includes('teras') || slug.includes('dis'))) return true;
     if (usageKey === 'endustriyel' && (name.includes('endüstr') || name.includes('endustr') || slug.includes('endustr'))) return true;
     if (usageKey === 'karavan_tekne' && (name.includes('karavan') || name.includes('tekne') || slug.includes('karavan'))) return true;
-    return name.includes(label) || label.includes(name);
+    return false;
   }) || null;
 };
 
-function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWizardClientProps) {
+function MeasureWizardContent({ initialProducts, initialCategories, initialMountingTypes = [], initialFabricTypes = [] }: MeasureWizardClientProps) {
   const { t, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -81,7 +79,10 @@ function MeasureWizardContent({ initialProducts, initialCategories }: MeasureWiz
 
   // Wizard state: 1 = Category selection (Usage Area), 2 = Product Selection, 3 = Mechanism / Sub-type Selection, 4 = Width (A) Entry, 5 = Height (B) Entry
   const [step, setStep] = useState<number>(1);
-  const { settings, mountingTypes, fabricTypes } = useDb();
+  const { settings } = useDb();
+
+  const mountingTypes = initialMountingTypes;
+  const fabricTypes = initialFabricTypes;
 
   const categories = React.useMemo(() => {
     return initialCategories
